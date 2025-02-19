@@ -1,0 +1,193 @@
+//
+// progress.scss
+//
+
+// Custom height
+
+// Progress height small
+.progress-sm {
+    height: 5px;
+}
+
+// Progress height medium
+.progress-md {
+    height: 8px;
+}
+
+// Progress height large
+.progress-lg {
+    height: 12px;
+}
+
+// Progress height extra large
+.progress-xl {
+    height: 15px;
+}
+
+
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+.side-nav .menuitem-active .menuitem-active .active {
+    color: #ffffff;
+    font-weight: bold;
+    background-color: rgba(189, 189, 189, 0.37);
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    margin: 0 5px 0 0;
+}
+
+.side-nav .menuitem-active .menuitem-active .active {
+    color: #ffffff;
+    font-weight: bold;
+    background-color: #e7f0f9;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    margin: 0 5px 0 0;
+}
+
+// .side-nav .menuitem-active>a {
+//     color: #000000 !important;
+//     font-weight: bold;
+//     background-color: rgb(189 189 189 / 37%);
+// }
+.side-nav .menuitem-active>a {
+    color: #000000 !important;
+    font-weight: bold;
+    background-color: #e7f0f9;
+}
+
+
+.side-nav-second-level .side-nav-item a.side-nav-link {
+    padding: 4px !important;
+}
+
+ul.side-nav-second-level:first-child {
+    margin-top: 10px;
+}
+
+.side-nav-second-level .side-nav-item {
+    border-left: 5px solid var(--tz-primary);
+}
+
+.w-200px div {
+    width: 250px !important;
+    text-wrap: wrap;
+}
+
+.side-nav .menuitem-active .menuitem-active .active {
+    color: #ffffff;
+    font-weight: bold;
+    background-color: #e7f0f9;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    margin: 0 5px 0 0;
+}
+
+.custom-table {
+    width: 100%;
+    border-spacing: 0 8px !important;
+    text-align: left;
+    border-collapse: separate;
+
+}
+
+.custom-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    background-color: #fff;
+}
+
+.custom-table tr {
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+
+.custom-table th {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.w-100px {
+    width: 100px !important;
+}
+
+.border-danger {
+    border: 1px solid #dc3545 !important;
+}
+
+
+.login-padding {
+    padding: 4px 10px;
+}
+
+
+.profilebar {
+    background-color: #e7f0f9 !important;
+    border-radius: 5px;
+}
+
+// .profilebar {
+//     background-color: #e3ecff !important;
+//     border-radius: 5px;
+// }
+
+.ml-5 {
+    margin-left: 50px !important;
+}
+
+.w-130px {
+    width: 130px !important;
+}
+
+.min-width-content {
+    width: min-content !important;
+}
+
+td {
+    align-content: center !important;
+}
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 285px);
+    flex-direction: column;
+}
+
+.loader-fixed {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 285px);
+    flex-direction: column;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100vh;
+    background: rgb(255 255 255 / 71%);
+    z-index: 1000;
+}
+
+.loader {
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 8px solid #d2d7e9;
+    border-right-color: #2e3191;
+    animation: l2 1s infinite linear;
+    height: 50px;
+}
+
+@keyframes l2 {
+    to {
+        transform: rotate(1turn)
+    }
+}
+
+.text-green {
+    color: green;
+}
