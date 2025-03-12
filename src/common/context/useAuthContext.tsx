@@ -4,17 +4,9 @@ import config from '@/config';
 
 // Define the User type based on API response
 type User = {
-	emailID?: string;
+	userID?: string;
 	userName?: string;
-	employeeName: string;
-	roles: string;
-	roleID: number;
-	roleName: string;
-	mobileNumber: string;
-	officeLandLine?: string;
-	extensionNumber?: string;
-	departmentID?: number;
-	departmentName?: string;
+	role: number;
 	status: number;
 	createdBy?: string;
 	createdDate?: string;
@@ -33,6 +25,9 @@ interface AuthContextType {
 	removeSession: () => void;
 	updateRole: (newRole: string) => void; // Function to update role dynamically
 }
+
+
+
 
 // Create the context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -76,28 +71,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	// Login function with API call
 	const login = async (email: string, password: string): Promise<{ status: number; message?: string }> => {
 		try {
-			const response = await axios.post(`${config.API_URL}/Login/Login`, { email, password });
+			const response = await axios.post(`${config.API_URL}/Login/Login`, { userID: email, password });
 			const data = response.data;
 
-			if (data.isSuccess && data.loginList) {
-				const employeeDetails = data.loginList;
+			if (data.isSuccess && data.login) {
+				const employeeDetails = data.login;
+				console.log("first", employeeDetails)
 				const userData: User = {
-					emailID: employeeDetails.emailID,
+					userID: employeeDetails.userID,
 					userName: employeeDetails.userName,
-					employeeName: employeeDetails.employeeName,
-					roles: employeeDetails.roleName,
-					roleID: employeeDetails.roleID,
-					roleName: employeeDetails.roleName,
-					mobileNumber: employeeDetails.mobileNumber,
-					officeLandLine: employeeDetails.officeLandLine,
-					extensionNumber: employeeDetails.extensionNumber,
-					departmentID: employeeDetails.departmentID,
-					departmentName: employeeDetails.departmentName,
+					role: employeeDetails.role,
 					status: employeeDetails.status,
-					createdBy: employeeDetails.createdBy,
-					createdDate: employeeDetails.createdDate,
-					updatedBy: employeeDetails.updatedBy,
-					updatedDate: employeeDetails.updatedDate,
 					token: data.token,
 				};
 

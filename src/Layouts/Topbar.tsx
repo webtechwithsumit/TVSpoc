@@ -166,7 +166,7 @@ const Topbar = ({ toggleMenu, navOpen }: TopbarProps) => {
 							<ProfileDropdown
 								menuItems={profileMenus}
 								userImage={profilePic}
-								username={user?.employeeName || 'Guest'} // Provide a fallback value
+								username={user?.userName || 'Guest'} // Provide a fallback value
 							// userid={empID || 'Guest ID'} // Provide a fallback value
 							/>
 						</li>

@@ -4,6 +4,7 @@ import { useAuthContext } from '@/common';
 // import type { User } from '@/types'
 import config from '@/config';
 
+
 export default function useLogin() {
 	const [loading, setLoading] = useState(false);
 	const location = useLocation();
@@ -26,7 +27,7 @@ export default function useLogin() {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ email, password }),
+				body: JSON.stringify({ userID: email, password }),
 			});
 
 			if (!res.ok) {
@@ -36,33 +37,17 @@ export default function useLogin() {
 			const data = await res.json();
 
 			// Ensure API response is valid
-			if (data.isSuccess && data.loginList) {
-				const employeeDetails = data.loginList;
+			if (data.isSuccess && data.login) {
+				const employeeDetails = data.login;
+				console.log(employeeDetails)
 
-				// Validate required properties before saving session
-				if (!employeeDetails.roleName || !data.token) {
-					throw new Error('Invalid login response: Missing required fields');
-				}
 
-				localStorage.setItem('userRoles', employeeDetails.roleName)
 				// Save session in authentication context
 				saveSession({
-					employeeName: employeeDetails.employeeName || '',
-					emailID: employeeDetails.emailID || '',
+					userID: employeeDetails.userID || '',
 					userName: employeeDetails.userName || '',
-					roles: employeeDetails.roleName || '',
-					mobileNumber: employeeDetails.mobileNumber || '',
-					officeLandLine: employeeDetails.officeLandLine || '',
-					extensionNumber: employeeDetails.extensionNumber || '',
-					departmentID: employeeDetails.departmentID || 0,
-					departmentName: employeeDetails.departmentName || '',
-					roleID: employeeDetails.roleID || 0,
-					roleName: employeeDetails.roleName || '',
-					status: employeeDetails.status || 0,
-					createdBy: employeeDetails.createdBy || '',
-					createdDate: employeeDetails.createdDate || '',
-					updatedBy: employeeDetails.updatedBy || '',
-					updatedDate: employeeDetails.updatedDate || '',
+					role: employeeDetails.role || '',
+					status: employeeDetails.status || '',
 					token: data.token,
 				});
 
