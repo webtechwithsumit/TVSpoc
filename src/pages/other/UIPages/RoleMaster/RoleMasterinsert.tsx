@@ -1,6 +1,6 @@
-import { useEffect, useState, ChangeEvent } from 'react';
+import { useEffect, useState, ChangeEvent } from 'react'; 
 import { Button, Col, Form, Row } from 'react-bootstrap';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import config from '@/config';
 import { toast } from 'react-toastify';
 import axiosInstance from '@/utils/axiosInstance';
@@ -9,74 +9,73 @@ import { useAuthContext } from '@/common';
 interface Manager {
     id: number;
     roleName: string;
-    description: string;
     status: number;
     createdBy: string;
+    createdDate: string;
     updatedBy: string;
+    updatedDate: string;
 }
 
-
-const RoleMasterinsert = () => {
+const RoleMasterInsert = () => {
     const { user } = useAuthContext();
-    const { id } = useParams<{ id: any }>();
     const navigate = useNavigate();
+    const { id } = useParams<{ id: string }>(); // Get `id` from URL params
+
     const [editMode, setEditMode] = useState<boolean>(false);
-    const [empName, setEmpName] = useState<string | null>(null);
     const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
     const [manager, setManager] = useState<Manager>({
         id: 0,
         roleName: '',
-        description: '',
-        status: 0,
+        status: 1, // default to active
         createdBy: '',
-        updatedBy: ''
+        createdDate: '',
+        updatedBy: '',
+        updatedDate: ''
     });
 
     useEffect(() => {
         toast.dismiss();
-        setEmpName(`${user?.employeeName} - ${user?.userName}`);
-    }, []);
-
-    useEffect(() => {
         if (id) {
+            // If id is available, set editMode and fetch data
             setEditMode(true);
-            fetchManagerById(id);
-        } else {
-            setEditMode(false);
+            fetchRoleData(Number(id));
         }
     }, [id]);
 
-    const fetchManagerById = async (id: string) => {
+    const fetchRoleData = async (roleId: number) => {
         try {
-            const response = await axiosInstance.get(`${config.API_URL}/Manager/GetManagerList?Flag=2`, {
-                params: { id }
-            });
-            if (response.data.isSuccess) {
-                const fetchedManager = response.data.managerList[0];
-                setManager(fetchedManager);
+            const apiUrl = `${config.API_URL}/RoleMaster/GetRoleMaster/${roleId}`;
+            const response = await axiosInstance.get(apiUrl);
+
+            if (response.status === 200 && response.data.isSuccess) {
+                const roleData = response.data.role_Masters[0];
+                setManager({
+                    id: roleData.id,
+                    roleName: roleData.roleName,
+                    status: roleData.status,
+                    createdBy: roleData.createdBy,
+                    createdDate: roleData.createdDate,
+                    updatedBy: roleData.updatedBy,
+                    updatedDate: roleData.updatedDate,
+                });
             } else {
-                console.error(response.data.message);
+                toast.error(response.data.message || 'Failed to fetch role data');
             }
-        } catch (error) {
-            console.error('Error fetching manager:', error);
+        } catch (error: any) {
+            toast.error(error.message || 'Error fetching role data');
+            console.error('Error fetching role data:', error);
         }
     };
-
-
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
         const parsedValue = type === 'radio' ? parseInt(value, 10) : value;
-        setManager({
-            ...manager,
-            [name]: parsedValue
-        });
+        setManager(prev => ({ ...prev, [name]: parsedValue }));
     };
 
     const validateFields = (): boolean => {
         const errors: { [key: string]: string } = {};
-        if (!manager.roleName) errors.managerName = 'Role Name is required';
-        if (!manager.description) errors.description = 'Description is required';
+        if (!manager.roleName) errors.roleName = 'Role Name is required';
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -90,25 +89,44 @@ const RoleMasterinsert = () => {
             return;
         }
 
+        const now = new Date().toISOString();
+        const empCode = `${user?.userName}${user?.id}`;
+
         const payload = {
             ...manager,
-            createdBy: editMode ? manager.createdBy : empName,
-            updatedBy: editMode ? empName : '',
+            createdBy: editMode ? manager.createdBy : empCode,
+            createdDate: editMode ? manager.createdDate : now,
+            updatedBy: empCode,
+            updatedDate: now,
         };
 
         try {
-            const apiUrl = `${config.API_URL}/Manager/InsertUpdateManager`;
-            const response = await axiosInstance.post(apiUrl, payload);
-            if (response.status === 200) {
-                navigate('/pages/managerMaster', {
-                    state: {
-                        successMessage: editMode
-                            ? `Record updated successfully!`
-                            : `Record    added successfully!`
-                    }
-                });
+            let apiUrl = `${config.API_URL}/RoleMaster/CreateRoleMaster`;
+
+            // Use PUT for update if in edit mode
+            if (editMode) {
+                apiUrl = `${config.API_URL}/RoleMaster/UpdateRoleMaster/${manager.id}`;
+                const response = await axiosInstance.put(apiUrl, payload);
+
+                if (response.status === 200 && response.data.isSuccess) {
+                    toast.success(response.data.message || 'Role updated successfully');
+                    navigate('/pages/RoleMaster', {
+                        state: { successMessage: 'Record updated successfully!' }
+                    });
+                } else {
+                    toast.error(response.data.message || 'Failed to update role');
+                }
             } else {
-                toast.error(response.data.message || 'Failed to process request');
+                const response = await axiosInstance.post(apiUrl, payload);
+
+                if (response.status === 200 && response.data.isSuccess) {
+                    toast.success(response.data.message || 'Role added successfully');
+                    navigate('/pages/RoleMaster', {
+                        state: { successMessage: 'Record added successfully!' }
+                    });
+                } else {
+                    toast.error(response.data.message || 'Failed to add role');
+                }
             }
         } catch (error: any) {
             toast.error(error.message || 'Error Adding/Updating');
@@ -118,7 +136,7 @@ const RoleMasterinsert = () => {
 
     return (
         <div>
-            <div className=" bg-white  p-3 mt-3">
+            <div className="bg-white p-3 mt-3">
                 <div className="d-flex profilebar p-2 my-2 justify-content-between align-items-center fs-20 rounded-3 border">
                     <h4 className='text-primary m-0'>
                         <i className="ri-file-list-line me-2"></i>
@@ -142,21 +160,6 @@ const RoleMasterinsert = () => {
                                     {validationErrors.roleName && <small className="text-danger">{validationErrors.roleName}</small>}
                                 </Form.Group>
                             </Col>
-                            <Col lg={6}>
-                                <Form.Group controlId="description" className="mb-3">
-                                    <Form.Label><i className="ri-user-line"></i> Description <span className='text-danger'>*</span></Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        name="description"
-                                        value={manager.description}
-                                        onChange={handleChange}
-                                        placeholder="Enter Role Description"
-                                        className={validationErrors.description ? "input-border" : ""}
-                                    />
-                                    {validationErrors.description && <small className="text-danger">{validationErrors.description}</small>}
-                                </Form.Group>
-                            </Col>
-
                             <Col lg={6}>
                                 <Form.Group controlId="status" className="mb-3">
                                     <Form.Label><i className="ri-flag-line"></i> Status</Form.Label>
@@ -182,21 +185,16 @@ const RoleMasterinsert = () => {
                                             onChange={handleChange}
                                         />
                                     </div>
-                                    {validationErrors.status && <small className="text-danger">{validationErrors.status}</small>}
                                 </Form.Group>
                             </Col>
-
-
                             <Col className='align-items-end d-flex justify-content-end mb-3'>
                                 <div>
                                     <Link to={'/pages/RoleMaster'}>
-                                        <Button variant="primary">
-                                            Back
-                                        </Button>
+                                        <Button variant="primary">Back</Button>
                                     </Link>
                                     &nbsp;
                                     <Button variant="primary" type="submit">
-                                        {editMode ? 'Update ' : 'Add '} Role
+                                        {editMode ? 'Update' : 'Add'} Role
                                     </Button>
                                 </div>
                             </Col>
@@ -208,4 +206,4 @@ const RoleMasterinsert = () => {
     );
 };
 
-export default RoleMasterinsert;
+export default RoleMasterInsert;

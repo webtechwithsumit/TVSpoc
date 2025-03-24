@@ -51,134 +51,132 @@ const MENU_ITEMS: MenuItemTypes[] = [
 				parentKey: 'Masters',
 			},
 			{
-				key: 'Empployee Member',
+				key: 'Empployee Master',
 				label: 'Employee Master',
 				url: '/pages/EmployeeMaster',
 				icon: 'ri-group-line',
 				parentKey: 'Masters',
 			},
-			{
-				key: 'Manage Product Type',
-				label: 'Ticket Type Master',
-				url: '/pages/ProductTypeMaster',
-				icon: 'ri-tools-line',
-				parentKey: 'Masters',
+			// {
+			// 	key: 'Notification Master',
+			// 	label: ' Notification Master',
+			// 	url: '/pages/Addholiday',
+			// 	icon: 'ri-calendar-todo-line',
+			// 	parentKey: 'Masters',
 
-			},
-
-			{
-				key: 'Task Master',
-				label: ' Task Master',
-				url: '/pages/CheckListMaster',
-				icon: 'ri-file-list-3-line',
-				parentKey: 'Masters',
-			},
-			{
-				key: 'SLA Master',
-				label: ' SLA Master',
-				url: '/pages/Addholiday',
-				icon: 'ri-calendar-todo-line',
-				parentKey: 'Masters',
-
-			},
-			{
-				key: 'Workflow Master',
-				label: ' Workflow Master',
-				url: '/pages/Addholiday',
-				icon: 'ri-calendar-todo-line',
-				parentKey: 'Masters',
-
-			},
-			{
-				key: 'Escalation  Master',
-				label: ' Escalation  Master',
-				url: '/pages/Addholiday',
-				icon: 'ri-calendar-todo-line',
-				parentKey: 'Masters',
-
-			},
-			{
-				key: 'Notification Master',
-				label: ' Notification Master',
-				url: '/pages/Addholiday',
-				icon: 'ri-calendar-todo-line',
-				parentKey: 'Masters',
-
-			},
+			// },
 		],
 	},
-
+//Menu added by sameer
 	{
-		key: 'ProductInventory',
-		label: 'Product & Inventory',
+		key: 'Bussiness Master',
+		label: 'Bussiness Master',
 		icon: 'ri-loop-left-line',
 		children: [
 			{
-				key: 'Product Master',
-				label: 'Product Master',
-				url: '/pages/ProductMaster',
+				key: 'Spare Part Master',
+				label: 'Spare Part Master',
+				url: '/pages/SparepartInventory',
 				icon: 'ri-slideshow-line',
 				parentKey: 'ProductInventory',
 			},
 			{
-				key: 'Spare Part/Inventory Master',
-				label: 'Spare Part/Inventory Master',
-				url: '/pages/ApprovalTask',
+				key: 'Quality Check Master',
+				label: 'Quality Check Master',
+				url: '/pages/QualityCheckMaster',
 				icon: 'ri-slideshow-line',
 				parentKey: 'ProductInventory',
 			},
 			{
-				key: 'FailureTypeMaster',
-				label: 'Failure Type Master',
-				url: '/pages/ApprovalTask',
+				key: 'Non Defective Spare Part',
+				label: 'Non Defective Spare Part',
+				url: '/pages/CustomerMaster',
 				icon: 'ri-slideshow-line',
 				parentKey: 'ProductInventory',
 			},
+			{
+				key: 'Defective Spare Part',
+				label: 'Defective Spare Part',
+				url: '/pages/DefectiveSparePart',
+				icon: 'ri-slideshow-line',
+				parentKey: 'ProductInventory',
+			},
+			
+			{
+				key: 'Expired Spare Part',
+				label: 'Expired Spare Part',
+				url: '/pages/ExpiredSparePart',
+				icon: 'ri-slideshow-line',
+				parentKey: 'ProductInventory',
+			},
+		
 
 		],
 	},
 	{
-		key: 'Customer Management',
-		label: 'Customer Management',
+		key: 'Ticket Management',
+		label: 'Ticket Management',
 		icon: 'ri-loop-left-line',
 		children: [
 			{
-				key: 'Customer Master',
-				label: 'Customer Master',
-				url: '/pages/ApprovalTask',
+				key: 'Ticket Master',
+				label: 'Ticket Master',
+				url: '/pages/TicketMaster',
 				icon: 'ri-slideshow-line',
-				parentKey: 'CustomerManagement',
+				parentKey: 'TicketManagement',
 			},
 			{
-				key: 'Courier Master',
-				label: 'Courier Master',
-				url: '/pages/ApprovalTask',
+				key: 'Assign Engineer Master',
+				label: 'Assign Engineer Master',
+				url: '/pages/AssignEngineerMaster',
 				icon: 'ri-slideshow-line',
-				parentKey: 'CustomerManagement',
+				parentKey: 'TicketManagement',
 			},
+			{
+				key: 'Service Execution Master',
+				label: 'Service Execution Master',
+				url: '/pages/ServiceExecutionMaster',
+				icon: 'ri-slideshow-line',
+				parentKey: 'TicketManagement',
+			},
+			{
+				key: 'Service Closure Master',
+				label: 'Service Closure Master',
+				url: '/pages/ClosureExecutionMaster',
+				icon: 'ri-slideshow-line',
+				parentKey: 'TicketManagement',
+			},
+			{
+				key: 'Report Master',
+				label: 'Report Master',
+				url: '/pages/ReportMaster',
+				icon: 'ri-slideshow-line',
+				parentKey: 'TicketManagement',
+			},
+
 		],
 	},
-	{
-		key: 'ExpenseCostManagement',
-		label: 'Expense & Cost Master',
-		icon: 'ri-loop-left-line',
-		children: [
-			{
-				key: 'Customer Master',
-				label: 'Customer Master',
-				url: '/pages/ApprovalTask',
-				icon: 'ri-slideshow-line',
-				parentKey: 'ExpenseCostManagement',
-			},
-			{
-				key: 'Courier Master',
-				label: 'Courier Master',
-				url: '/pages/ApprovalTask',
-				icon: 'ri-slideshow-line',
-				parentKey: 'ExpenseCostManagement',
-			},
-		],
-	},
+	// {
+	// 	key: 'Profile Settings',
+	// 	label: 'Profile Settings',
+	// 	icon: 'ri-loop-left-line',
+	// 	children: [
+	// 		{
+	// 			key: 'Profile Details',
+	// 			label: 'Profile Details',
+	// 			url: '/pages/ProfileDetails',
+	// 			icon: 'ri-slideshow-line',
+	// 			parentKey: 'Profile Settings',
+	// 		},
+	// 		{
+	// 			key: 'Update Profile',
+	// 			label: 'Update Profile',
+	// 			url: '/pages/UpdaterPofile',
+	// 			icon: 'ri-slideshow-line',
+	// 			parentKey: 'Profile Settings',
+	// 		},
+	// 	],
+	// },
 
 
 ]

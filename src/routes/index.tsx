@@ -30,6 +30,29 @@ const DepartmentMasterinsert = React.lazy(() => import('../pages/other/UIPages/D
 const ProductTypeMaster = React.lazy(() => import('../pages/other/UIPages/ProductType/ProductTypeMaster.tsx'))
 const ProductTypeMasterinsert = React.lazy(() => import('../pages/other/UIPages/ProductType/ProductTypeinsertMaster.tsx'))
 
+//Path added by sameer
+const QualityCheckMaster = React.lazy(() => import('../pages/other/UIPages/ProductType/QualityCheckMaster.tsx'))
+const QualityCheckMasterInsert = React.lazy(() => import('../pages/other/UIPages/ProductType/QualityCheckMasterInsert.tsx'))
+
+const DefectiveSparePart = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/DefectiveSparePart.tsx'))
+const DefectiveSparePartInsert = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/DefectiveSparePartInsert.tsx'))
+
+const SparepartInventory = React.lazy(() => import('../pages/other/UIPages/ProductType/SparepartInventory.tsx'))
+const SparepartInventoryInsert = React.lazy(() => import('../pages/other/UIPages/ProductType/SparepartInventoryInsert.tsx'))
+
+const CustomerMaster = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/CustomerMaster.tsx'))
+const CustomerMasterInsert = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/CustomerMasterInsert.tsx'))
+
+const ExpiredSparePart = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/ExpiredSparePart.tsx'))
+const ExpiredSparePartInsert = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/ExpiredSparePartInsert.tsx'))
+
+const TicketMaster = React.lazy(() => import('../pages/other/UIPages/TicketManagement/TicketMaster.tsx'))
+const TicketMasterinsert = React.lazy(() => import('../pages/other/UIPages/TicketManagement/TicketMasterinsert.tsx'))
+
+
+
+
+
 const RoleMaster = React.lazy(() => import('../pages/other/UIPages/RoleMaster/Rolemaster.tsx'))
 const RoleMasterinsert = React.lazy(() => import('../pages/other/UIPages/RoleMaster/RoleMasterinsert.tsx'))
 
@@ -159,6 +182,127 @@ const customPagesRoutes = {
 			element: <ProductTypeMasterinsert />,
 			route: PrivateRoute,
 		},
+
+		//below work is started by sameer
+		
+		{
+			path: '/pages/SparepartInventory',
+			name: 'SparepartInventory',
+			element: <SparepartInventory />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/SparepartInventoryInsert',
+			name: 'SparepartInventoryInsert',
+			element: <SparepartInventoryInsert />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/SparepartInventoryInsert/:id',
+			name: 'SparepartInventoryInsert',
+			element: <SparepartInventoryInsert />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/QualityCheckMaster',
+			name: 'QualityCheckMaster',
+			element: <QualityCheckMaster />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/QualityCheckMasterInsert',
+			name: 'QualityCheckMasterInsert',
+			element: <QualityCheckMasterInsert />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/QualityCheckMasterInsert/:id',
+			name: 'QualityCheckMasterInsert',
+			element: <QualityCheckMasterInsert />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/DefectiveSparePartInsert',
+			name: 'DefectiveSparePartInsert',
+			element: <DefectiveSparePartInsert />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/DefectiveSparePartInsert/:id',
+			name: 'DefectiveSparePartInsert',
+			element: <DefectiveSparePartInsert />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/ExpiredSparePart',
+			name: 'ExpiredSparePart',
+			element: <ExpiredSparePart />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/ExpiredSparePartInsert',
+			name: 'ExpiredSparePartInsert',
+			element: <ExpiredSparePartInsert />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/ExpiredSparePartInsert/:id',
+			name: 'ExpiredSparePartInsert',
+			element: <ExpiredSparePartInsert />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/CustomerMaster',
+			name: 'CustomerMaster',
+			element: <CustomerMaster />,
+			route: PrivateRoute,
+		},
+
+
+		{
+			path: '/pages/CustomerMasterInsert',
+			name: 'CustomerMasterInsert',
+			element: <CustomerMasterInsert />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/CustomerMasterInsert/:id',
+			name: 'CustomerMasterInsert',
+			element: <CustomerMasterInsert />,
+			route: PrivateRoute,
+		},
+			{
+			path: '/pages/DefectiveSparePart',
+			name: 'DefectiveSparePart',
+			element: <DefectiveSparePart />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/DefectiveSparePart/:id',
+			name: 'DefectiveSparePart',
+			element: <DefectiveSparePart />,
+			route: PrivateRoute,
+		},
+		//below work is started by sameer for ticket master
+		{
+			path: '/pages/TicketMaster',
+			name: 'TicketMaster',
+			element: <TicketMaster />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/TicketMasterinsert',
+			name: 'TicketMasterinsert',
+			element: <TicketMasterinsert />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/TicketMasterinsert/:id',
+			name: 'TicketMasterinsert',
+			element: <TicketMasterinsert />,
+			route: PrivateRoute,
+		},
+
 
 		{
 			path: '/pages/RoleMaster',

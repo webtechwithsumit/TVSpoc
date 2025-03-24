@@ -2,7 +2,6 @@ import { useEffect, useState, ChangeEvent } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import config from '@/config';
-import Select from 'react-select';
 import { toast } from 'react-toastify';
 import axiosInstance from '@/utils/axiosInstance';
 
@@ -25,14 +24,7 @@ interface Employee {
     roleID: number;
 }
 
-interface Department {
-    id: number;
-    departmentName: string;
-}
-interface RoleName {
-    id: number;
-    roleName: string;
-}
+
 
 
 
@@ -42,8 +34,6 @@ const EmployeeMasterInsert = () => {
     const [editMode, setEditMode] = useState<boolean>(false);
     const [empName, setEmpName] = useState<string | null>(null);
     const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
-    const [departmentList, setDepartmentList] = useState<Department[]>([]);
-    const [roleList, setRoleList] = useState<RoleName[]>([]);
     const [employee, setEmployee] = useState<Employee>({
         id: 0,
         userName: '',
@@ -85,11 +75,10 @@ const EmployeeMasterInsert = () => {
 
     const fetchEmployeeById = async (id: string) => {
         try {
-            const response = await axiosInstance.get(`${config.API_URL}/Employee/GetEmployee`, {
-                params: { id }
+            const response = await axiosInstance.get(`${config.API_URL}/EmployeeMaster/GetEmployeeMaster/${id}`, {
             });
             if (response.data.isSuccess) {
-                const fetchedEmployee = response.data.getEmployees[0];
+                const fetchedEmployee = response.data.employee_Masters[0];
                 setEmployee(fetchedEmployee);
             } else {
                 console.error(response.data.message);
@@ -99,24 +88,6 @@ const EmployeeMasterInsert = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchData = async (endpoint: string, setter: Function, listName: string) => {
-            try {
-                const response = await axiosInstance.get(`${config.API_URL}/${endpoint}`);
-                if (response.data.isSuccess) {
-                    setter(response.data[listName] as Department[]);
-                } else {
-                    console.error(response.data.message);
-                }
-            } catch (error) {
-                console.error(`Error fetching data from ${endpoint}:`, error);
-            }
-        };
-
-        fetchData('CommonDropdown/GetDepartmentList?Flag=2', setDepartmentList, 'getDepartmentLists');
-        fetchData('CommonDropdown/GetRoleMasterList', setRoleList, 'roleMasterLists');
-
-    }, []);
 
     const handleChange = (e: ChangeEvent<any> | null, name?: string, value?: any) => {
         if (e) {
@@ -156,8 +127,6 @@ const EmployeeMasterInsert = () => {
         if (!employee.userName) errors.userName = 'User Name is required';
         if (!employee.email) errors.email = 'Email is required';
         if (!employee.mobileNumber) errors.mobileNumber = 'Mobile Number is required';
-        if (!employee.departmentID) errors.departmentID = 'Department Name is required';
-        if (!employee.roleID) errors.roleID = 'Role Name is required';
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -178,7 +147,7 @@ const EmployeeMasterInsert = () => {
         };
 
         try {
-            const apiUrl = `${config.API_URL}/Employee/InsertUpdateEmployee`;
+            const apiUrl = `${config.API_URL}/EmployeeMaster/CreateEmployeeMaster`;
             const response = await axiosInstance.post(apiUrl, payload);
             if (response.status === 200) {
                 navigate('/pages/EmployeeMaster', {
@@ -306,55 +275,6 @@ const EmployeeMasterInsert = () => {
                                         className={validationErrors.password ? "input-border" : ""}
                                     />
                                     {validationErrors.password && <small className="text-danger">{validationErrors.password}</small>}
-                                </Form.Group>
-                            </Col>
-                            <Col lg={6}>
-                                <Form.Group controlId="departmentID" className="mb-3">
-                                    <Form.Label> <i className="ri-building-line"></i> Department Name <span className='text-danger'>*</span></Form.Label>
-                                    <Select
-                                        name="departmentID"
-                                        value={departmentList.find((dept) => dept.id === employee.departmentID)}
-                                        onChange={(selectedOption) => {
-                                            setEmployee({
-                                                ...employee,
-                                                departmentID: selectedOption?.id || 0,
-                                                departmentName: selectedOption?.departmentName || '',
-                                            });
-                                        }}
-                                        getOptionLabel={(dept) => dept.departmentName}
-                                        getOptionValue={(dept) => String(dept.id)}
-                                        options={departmentList}
-                                        isSearchable={true}
-                                        placeholder="Select Department Name"
-                                        className={validationErrors.departmentID ? "input-border" : ""}
-                                    />
-                                    {validationErrors.departmentID && <small className="text-danger">{validationErrors.departmentID}</small>}
-                                </Form.Group>
-                            </Col>
-
-                            <Col lg={6}>
-                                <Form.Group controlId="roleID" className="mb-3">
-                                    <Form.Label>Role  <span className='text-danger'>*</span></Form.Label>
-                                    <Select
-                                        name="roleID"
-                                        value={roleList.find((dept) => dept.id === employee.roleID)}
-                                        onChange={(selectedOption) => {
-                                            setEmployee({
-                                                ...employee,
-                                                roleID: selectedOption?.id || 0,
-                                                roleName: selectedOption?.roleName || '',
-                                            });
-                                        }}
-                                        getOptionLabel={(dept) => dept.roleName}
-                                        getOptionValue={(dept) => String(dept.id)}
-                                        options={roleList}
-                                        isSearchable={true}
-                                        placeholder="Select Department Name"
-                                        className={validationErrors.roleID ? "input-border" : ""}
-                                    />
-                                    {validationErrors.roleID && (
-                                        <small className="text-danger">{validationErrors.roleID}</small>
-                                    )}
                                 </Form.Group>
                             </Col>
                             <Col lg={6}>

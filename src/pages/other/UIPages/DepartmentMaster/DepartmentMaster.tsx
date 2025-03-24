@@ -46,8 +46,8 @@ const DesignationMaster = () => {
     const [departmentList, setDepartmentList] = useState<DepartmentList[]>([]);
     const [searchDept, setSearchDept] = useState('');
     const [searchStatus, setSearchStatus] = useState('');
-
-
+        console.log(setDepartmentList)
+        console.log(departmentList)
     // Function to handle opening the modal
 
     const location = useLocation();
@@ -65,7 +65,6 @@ const DesignationMaster = () => {
     const [columns, setColumns] = useState<Column[]>([
         { id: 'departmentName', label: 'Department Name', visible: true },
         { id: 'departmentCode', label: 'Department Code', visible: true },
-        { id: 'departmentDescription', label: 'Description', visible: true },
         { id: 'status', label: 'Status', visible: true },
     ]);
 
@@ -87,11 +86,11 @@ const DesignationMaster = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`${config.API_URL}/DepartmentMaster/GetDepartment`, {
+            const response = await axiosInstance.get(`${config.API_URL}/DepartmentMaster/GetDepartmentMaster/0`, {
                 params: { PageIndex: currentPage }
             });
             if (response.data.isSuccess) {
-                setDesignations(response.data.departments);
+                setDesignations(response.data.department_Masters);
                 setTotalPages(Math.ceil(response.data.totalCount / 10));
             } else {
                 console.error(response.data.message);
@@ -136,23 +135,6 @@ const DesignationMaster = () => {
     };
 
 
-
-    useEffect(() => {
-        const fetchData = async (endpoint: string, setter: Function, listName: string) => {
-            try {
-                const response = await axiosInstance.get(`${config.API_URL}/${endpoint}`);
-                if (response.data.isSuccess) {
-                    setter(response.data[listName]);
-                } else {
-                    console.error(response.data.message);
-                }
-            } catch (error) {
-                console.error(`Error fetching data from ${endpoint}:`, error);
-            }
-        };
-        fetchData('CommonDropdown/GetDepartmentList?Flag=1', setDepartmentList, 'getDepartmentLists');
-    }, []);
-
     const handleClear = async () => {
         setCurrentPage(1);
         setSearchDept('');
@@ -162,47 +144,6 @@ const DesignationMaster = () => {
     };
 
 
-    const convertToCSV = (data: Designation[]) => {
-        const csvRows = [
-            ['ID',
-                'Department Name', 'Status',
-                'Created By', 'Updated By', 'Created Date', 'Updated Date'],
-            ...data.map(doer => [
-                doer.id,
-                doer.departmentName,
-                doer.departmentCode,
-                doer.departmentDescription,
-                doer.status,
-                doer.createdBy,
-                doer.updatedBy,
-                doer.createdDate,
-                doer.updatedDate,
-            ])
-        ];
-        return csvRows.map(row => row.join(',')).join('\n');
-    };
-
-
-    const downloadCSV = () => {
-        const csvData = convertToCSV(designations);
-        const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        if (link.download !== undefined) {
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'Department Master.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    };
-
-
-    const optionsStatus = [
-        { value: 'Active', label: 'Active' },
-        { value: 'inActive', label: 'inActive' }
-    ];
 
 
     return (
@@ -211,7 +152,7 @@ const DesignationMaster = () => {
                 <div className="d-flex justify-content-between profilebar p-1">
                     <h4 className='text-primary d-flex align-items-center m-0'><i className="ri-file-list-line me-2 text-primary "></i>Manage Department</h4>
                     <div className="d-flex justify-content-end bg-light w-50 profilebar">
-                        <Button variant="primary" onClick={downloadCSV} className="me-2">
+                        <Button variant="primary" className="me-2">
                             Download CSV
                         </Button>
                         <Link to='/pages/DepartmentMasterinsert'>
@@ -245,12 +186,12 @@ const DesignationMaster = () => {
                                         <Form.Label>Department Name</Form.Label>
                                         <Select
                                             name="searchDept"
-                                            value={departmentList.find(item => item.departmentName === searchDept) || null}
-                                            onChange={(selectedOption) => setSearchDept(selectedOption ? selectedOption.departmentName : '')}
-                                            options={departmentList}
-                                            getOptionLabel={(item) => item.departmentName}
-                                            getOptionValue={(item) => item.departmentName}
-                                            isSearchable={true}
+                                            // value={departmentList.find(item => item.departmentName === searchDept) || null}
+                                            // onChange={(selectedOption) => setSearchDept(selectedOption ? selectedOption.departmentName : '')}
+                                            // options={departmentList}
+                                            // getOptionLabel={(item) => item.departmentName}
+                                            // getOptionValue={(item) => item.departmentName}
+                                            // isSearchable={true}
                                             placeholder="Select Department Name"
                                             className="h45"
                                         />
@@ -262,9 +203,9 @@ const DesignationMaster = () => {
                                         <Form.Label>Status</Form.Label>
                                         <Select
                                             name="searchStatus"
-                                            options={optionsStatus}
-                                            value={optionsStatus.find(option => option.value === searchStatus) || null}
-                                            onChange={(selectedOption) => setSearchStatus(selectedOption?.value || '')}
+                                            // options={optionsStatus}
+                                            // value={optionsStatus.find(option => option.value === searchStatus) || null}
+                                            // onChange={(selectedOption) => setSearchStatus(selectedOption?.value || '')}
                                             placeholder="Select Status"
                                         />
                                     </Form.Group>
@@ -367,10 +308,7 @@ const DesignationMaster = () => {
                                                                     <i className="btn ri-edit-line text-white"></i>
                                                                 </Button>
                                                             </Link>
-                                                            <Button variant="primary" className="p-0 text-white">
-                                                                <i className="btn ri-delete-bin-6-line text-white"></i>
-                                                            </Button>
-                                                        </td>
+                                                           </td>
                                                     </tr>
                                                 ))
                                             ) : (

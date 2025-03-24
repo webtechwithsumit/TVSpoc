@@ -3,21 +3,16 @@ import { Button, Table, Container, Row, Col, Alert, Form, ButtonGroup } from 're
 import { Link } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import config from '@/config';
-import Select from 'react-select';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import PaginationComponent from '../../Component/PaginationComponent';
 import axiosInstance from '@/utils/axiosInstance';
 
 
-interface Employee {
+interface RoleMaster {
     id: number;
-    userName: string;
-    email: string;
-    mobileNumber: string;
     managerName: string;
     departmentID: number;
-    departmentName: string;
     status: number;
     createdBy: string;
     updatedBy: string;
@@ -30,27 +25,13 @@ interface Column {
     visible: boolean;
 }
 
-interface EmployeeList {
-    empId: string;
-    employeeName: string;
-}
-
-interface ModuleProjectList {
-    id: string;
-    projectName: string
-    moduleName: string
-}
 
 
-const EmployeeMaster = () => {
-    const [employee, setEmployee] = useState<Employee[]>([]);
+const QualityCheckMaster = () => {
+    const [employee, setEmployee] = useState<RoleMaster[]>([]);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [employeeList, setEmployeeList] = useState<EmployeeList[]>([]);
-    const [downloadCsv, setDownloadCsv] = useState<Employee[]>([]);
-    const [projectList, setProjectList] = useState<ModuleProjectList[]>([])
-    const [searchTriggered, setSearchTriggered] = useState(false);
 
 
     const location = useLocation();
@@ -66,16 +47,16 @@ const EmployeeMaster = () => {
 
 
     // both are required to make dragable column of table 
-    const [columns, setColumns] = useState<Column[]>([
-        { id: 'name', label: 'Employee Name', visible: true },
-        { id: 'userName', label: 'User Name', visible: true },
-        { id: 'email', label: 'Email', visible: true },
-        { id: 'mobileNumber', label: 'Mobile Number', visible: true },
-        { id: 'roleName', label: 'Role', visible: true },
-        { id: 'departmentName', label: 'Department Name', visible: true },
-        { id: 'status', label: 'Status', visible: true },
-    ]);
-
+        const [columns, setColumns] = useState<Column[]>([
+            { id: 'item_Name', label: 'Item Name', visible: true },
+            { id: 'category', label: 'Category', visible: true },
+            { id: 'brand', label: 'Brand', visible: true },
+            { id: 'model_Number', label: 'Model Number', visible: true },
+            { id: 'stock_Quantity', label: 'Stock Quantity', visible: true },
+            { id: 'reorder_Level', label: 'Reorder Level', visible: true },
+            { id: 'stock_Location', label: 'Stock Location', visible: true },
+            { id: 'selling_Price', label: 'Selling Price', visible: true },
+        ]);
 
     const handleOnDragEnd = (result: any) => {
         if (!result.destination) return;
@@ -88,80 +69,16 @@ const EmployeeMaster = () => {
 
 
 
-    const [searchEmployee, setSearchEmployee] = useState('');
-    const [searchProject, setSearchProject] = useState('');
-    const [searchAppAccessLevel, setSearchAppAccessLevel] = useState('');
-    const [searchDataAccessLevel, setSearchDataAccessLevel] = useState('');
-    const [searchAppAccess, setSearchAppAccess] = useState('');
-    const [searchEmpstatus, setSearchEmpstatus] = useState('');
-
-
-
     useEffect(() => {
-        if (!searchTriggered) {
-            fetchEmployee();
-        }
+
+        fetchEmployee();
     }, [currentPage]);
 
-    useEffect(() => {
-        if (searchTriggered) {
-            if (searchEmployee || searchProject || searchAppAccessLevel || searchDataAccessLevel || searchAppAccess || searchEmpstatus) {
-                (async () => {
-                    await handleSearch();
-                })();
-            } else {
-                fetchEmployee();
-            }
-        }
-    }, [searchTriggered, currentPage]);
-
-
-    const handleSearch = async () => {
-        try {
-            let query = `?`;
-
-            if (searchEmployee) query += `EmployeeName=${searchEmployee}&`;
-            if (searchProject) query += `CurrentProjectName=${searchProject}&`;
-            if (searchAppAccessLevel) query += `AppAccessLevel=${searchAppAccessLevel}&`;
-            if (searchDataAccessLevel) query += `DataAccessLevel=${searchDataAccessLevel}&`;
-            if (searchAppAccess) query += `AppAccess=${searchAppAccess}&`;
-            if (searchEmpstatus) query += `EmpStatus=${searchEmpstatus}&`;
-            query += `PageIndex=${currentPage}`;
-            query = query.endsWith('&') ? query.slice(0, -1) : query;
-
-            const apiUrl = `${config.API_URL}/EmployeeMaster/SearchEmployee${query}`;
-            console.log("API URL:", apiUrl);
-
-            setLoading(true);
-
-            const { data } = await axiosInstance.get(apiUrl, { headers: { accept: '*/*' } });
-
-            if (data.isSuccess) {  // Ensure successful response
-                setEmployee(data.employeeMasterList);
-                setTotalPages(Math.ceil(data.totalCount / 10));
-                console.log("Search Response:", data.employeeMasterList);
-            } else {
-                console.log("Error in API response:", data.message);  // Handle error message if needed
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
 
 
     const handleClear = async () => {
         setCurrentPage(1);
-        setSearchEmployee('');
-        setSearchProject('');
-        setSearchAppAccessLevel('');
-        setSearchDataAccessLevel('');
-        setSearchAppAccess('');
-        setSearchEmpstatus('');
-        setSearchTriggered(false);
-        await new Promise(resolve => setTimeout(resolve, 200));
         await fetchEmployee();
     };
 
@@ -169,11 +86,11 @@ const EmployeeMaster = () => {
     const fetchEmployee = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`${config.API_URL}/EmployeeMaster/GetEmployeeMaster/0`, {
+            const response = await axiosInstance.get(`${config.API_URL}/InventorySpare/GetInventorySpare/0`, {
                 params: { PageIndex: currentPage }
             });
             if (response.data.isSuccess) {
-                setEmployee(response.data.employee_Masters);
+                setEmployee(response.data.inventorySpares);
                 setTotalPages(Math.ceil(response.data.totalCount / 10));
             } else {
                 console.error(response.data.message);
@@ -187,75 +104,43 @@ const EmployeeMaster = () => {
     };
 
 
-
     return (
+
+
 
         <div className='p-3 mt-3 bg-white'>
             <Row className=' mb-2 px-2'>
                 <div className="d-flex justify-content-between profilebar p-1">
-                    <h4 className='text-primary d-flex align-items-center m-0'><i className="ri-file-list-line me-2 text-primary "></i> Manage Employee List </h4>
+                    <h4 className='text-primary d-flex align-items-center m-0'><i className="ri-file-list-line me-2 text-primary "></i>Quality Check Master</h4>
                     <div className="d-flex justify-content-end bg-light w-50 profilebar">
-                        <Button variant="primary" className="me-2">
+                        <Button variant="primary"
+                            //  onClick={downloadCSV} 
+                            className="me-2">
                             Download CSV
                         </Button>
-                        <Link to='/pages/EmployeeMasterinsert'>
+                        {/* <Link to='/pages/QualityCheckMasterInsert'>
                             <Button variant="primary" className="">
-                                Add Employee
+                                Add Quality Check
                             </Button>
-                        </Link>
+                        </Link> */}
                     </div>
                 </div>
             </Row>
-
-
             <div className='bg-white p-2 pb-2'>
-
                 <Form
                     onSubmit={async (e) => {
                         e.preventDefault();
-                        setSearchTriggered(true);
-                        await setCurrentPage(1);
 
                     }}
                 >
                     <Row>
-                        <Col lg={4} className="mt-2">
+                        <Col lg={8} className="mt-2">
                             <Form.Group controlId="searchEmployee">
-                                <Form.Label>Manager Name</Form.Label>
-                                <Select
-                                    name="searchEmployee"
-                                    placeholder="Select Manager Name"
-                                    className="h45"
-                                />
+                                <Form.Label>Quality Check Master</Form.Label>
+                               
                             </Form.Group>
                         </Col>
-
-
-
-                        <Col lg={4} className="mt-2">
-                            <Form.Group controlId="searchProject">
-                                <Form.Label>Department Name</Form.Label>
-                                <Select
-                                    name="searchProject"
-                                    placeholder="Select Department Name"
-                                    className="h45"
-                                />
-                            </Form.Group>
-                        </Col>
-
-
-
-                        <Col lg={4} className="mt-2">
-                            <Form.Group controlId="searchEmpstatus">
-                                <Form.Label> Status</Form.Label>
-                                <Select
-                                    name="searchEmpstatus"
-                                    placeholder="Select  Status"
-                                />
-                            </Form.Group>
-                        </Col>
-
-                        <Col></Col>
+                       
 
                         <Col lg={4} className="align-items-end d-flex justify-content-end mt-3">
                             <ButtonGroup aria-label="Basic example" className="w-100">
@@ -263,9 +148,7 @@ const EmployeeMaster = () => {
                                     <i className="ri-loop-left-line"></i>
                                 </Button>
                                 &nbsp;
-                                <Button type="submit" variant="primary"
-
-                                >
+                                <Button type="submit" variant="primary" >
                                     Search
                                 </Button>
                             </ButtonGroup>
@@ -325,7 +208,7 @@ const EmployeeMaster = () => {
                                                             )}
                                                         </Draggable>
                                                     ))}
-                                                    <th className='text-center'>Action</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             )}
                                         </Droppable>
@@ -337,24 +220,18 @@ const EmployeeMaster = () => {
                                                     <td>{(currentPage - 1) * 10 + index + 1}</td>
                                                     {columns.filter(col => col.visible).map((col) => (
                                                         <td key={col.id}>
-
                                                             {col.id === 'status' ? (item.status === 1 ? 'Active' : 'Inactive') : (
-                                                                <div>{item[col.id as keyof Employee]}</div>
+                                                                <div>{item[col.id as keyof RoleMaster]}</div>
                                                             )}
 
                                                         </td>
                                                     ))}
-
-                                                    <td className='text-center'>
-                                                        <Link to={`/pages/EmployeeMasterinsert/${item.id}`}>
-                                                            <Button variant='primary' className='p-0 text-white me-3'>
-                                                                <i className='btn ri-edit-line text-white' ></i>
-                                                            </Button>
-
-                                                        </Link>
-                                                        <Button variant='primary' className='p-0 text-white'>
-                                                            <i className=" btn ri-delete-bin-6-line text-white"></i>
+                                                    <td><Link to={`/pages/RoleMasterinsert/${item.id}`}>
+                                                        <Button variant='primary' className='icon-padding text-white'>
+                                                            {/* <i className='fs-18 ri-edit-line text-white' ></i> */}
+                                                            Defective
                                                         </Button>
+                                                    </Link>
                                                     </td>
                                                 </tr>
                                             ))
@@ -380,7 +257,6 @@ const EmployeeMaster = () => {
                         )}
                     </div>
                 </>
-
             )}
 
             <PaginationComponent currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
@@ -388,4 +264,4 @@ const EmployeeMaster = () => {
     );
 };
 
-export default EmployeeMaster;
+export default QualityCheckMaster;
