@@ -78,28 +78,28 @@ const MENU_ITEMS: MenuItemTypes[] = [
 				label: 'Spare Part Master',
 				url: '/pages/SparepartInventory',
 				icon: 'ri-slideshow-line',
-				parentKey: 'ProductInventory',
+				parentKey: 'Bussiness Master',
 			},
 			{
 				key: 'Quality Check Master',
 				label: 'Quality Check Master',
 				url: '/pages/QualityCheckMaster',
 				icon: 'ri-slideshow-line',
-				parentKey: 'ProductInventory',
+				parentKey: 'Bussiness Master',
 			},
 			{
 				key: 'Non Defective Spare Part',
 				label: 'Non Defective Spare Part',
 				url: '/pages/CustomerMaster',
 				icon: 'ri-slideshow-line',
-				parentKey: 'ProductInventory',
+				parentKey: 'Bussiness Master',
 			},
 			{
 				key: 'Defective Spare Part',
 				label: 'Defective Spare Part',
 				url: '/pages/DefectiveSparePart',
 				icon: 'ri-slideshow-line',
-				parentKey: 'ProductInventory',
+				parentKey: 'Bussiness Master',
 			},
 			
 			{
@@ -107,7 +107,7 @@ const MENU_ITEMS: MenuItemTypes[] = [
 				label: 'Expired Spare Part',
 				url: '/pages/ExpiredSparePart',
 				icon: 'ri-slideshow-line',
-				parentKey: 'ProductInventory',
+				parentKey: 'Bussiness Master',
 			},
 		
 
