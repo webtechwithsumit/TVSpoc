@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Button, Table, Container, Row, Col, Alert} from 'react-bootstrap';
+import { Button, Table, Container, Row, Col, Alert, Form, ButtonGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import config from '@/config';
+import Select from 'react-select';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import PaginationComponent from '../../Component/PaginationComponent';
@@ -27,7 +28,7 @@ interface Column {
 
 
 
-const DefectiveSparePart = () => {
+const NonDefectiveSparePart = () => {
     const [employee, setEmployee] = useState<RoleMaster[]>([]);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -47,13 +48,16 @@ const DefectiveSparePart = () => {
 
 
     // both are required to make dragable column of table 
-    const [columns, setColumns] = useState<Column[]>([
-        { id: 'DefectiveSparePart  ', label: 'Defective Spare Part', visible: true },
-        { id: 'description', label: 'Description ', visible: true },
-        { id: 'status', label: 'Status ', visible: true },
-
-
-    ]);
+        const [columns, setColumns] = useState<Column[]>([
+            { id: 'item_Name', label: 'Item Name', visible: true },
+            { id: 'category', label: 'Category', visible: true },
+            { id: 'brand', label: 'Brand', visible: true },
+            { id: 'model_Number', label: 'Model Number', visible: true },
+            { id: 'stock_Quantity', label: 'Stock Quantity', visible: true },
+            { id: 'reorder_Level', label: 'Reorder Level', visible: true },
+            { id: 'stock_Location', label: 'Stock Location', visible: true },
+            { id: 'selling_Price', label: 'Selling Price', visible: true },
+        ]);
 
     const handleOnDragEnd = (result: any) => {
         if (!result.destination) return;
@@ -72,14 +76,22 @@ const DefectiveSparePart = () => {
     }, [currentPage]);
 
 
+
+
+    // const handleClear = async () => {
+    //     setCurrentPage(1);
+    //     await fetchEmployee();
+    // };
+
+
     const fetchEmployee = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`${config.API_URL}/RoleMaster/GetRole`, {
+            const response = await axiosInstance.get(`${config.API_URL}/InventorySpare/GetNonDefectiveSparePartLis`, {
                 params: { PageIndex: currentPage }
             });
             if (response.data.isSuccess) {
-                setEmployee(response.data.roleMasterListResponses);
+                setEmployee(response.data.inventorySpares);
                 setTotalPages(Math.ceil(response.data.totalCount / 10));
             } else {
                 console.error(response.data.message);
@@ -100,22 +112,106 @@ const DefectiveSparePart = () => {
         <div className='p-3 mt-3 bg-white'>
             <Row className=' mb-2 px-2'>
                 <div className="d-flex justify-content-between profilebar p-1">
-                    <h4 className='text-primary d-flex align-items-center m-0'><i className="ri-file-list-line me-2 text-primary "></i> Defective Spare Part</h4>
+                    <h4 className='text-primary d-flex align-items-center m-0'><i className="ri-file-list-line me-2 text-primary "></i>Non Defective Spare Part List</h4>
                     <div className="d-flex justify-content-end bg-light w-50 profilebar">
                         <Button variant="primary"
                             //  onClick={downloadCSV} 
                             className="me-2">
                             Download CSV
                         </Button>
-                        <Link to='/pages/DefectiveSparePartInsert'>
+                        {/* <Link to='/pages/QualityCheckMasterInsert'>
                             <Button variant="primary" className="">
-                                Add Defective Spare                       
-                             </Button>
-                        </Link>
+                                Add Quality Check
+                            </Button>
+                        </Link> */}
                     </div>
                 </div>
             </Row>
-           
+            <div className='bg-white p-2 pb-2'>
+            <Form onSubmit={async (e) => e.preventDefault()}>
+                    <Row>
+                        <Col lg={4} className="mt-2">
+                            <Form.Group controlId="searchEmployee">
+                                <Form.Label>Item Name</Form.Label>
+                                <Select
+                                    name="searchspare"
+                                    // value={roleNameFilter ? { label: roleNameFilter, value: roleNameFilter } : null}  // Set the value based on roleNameFilter
+                                    // onChange={(selectedOption) => setRoleNameFilter(selectedOption ? selectedOption.value : '')}  // Update filter on change
+                                    // options={employee.map(emp => ({ label: emp.roleName, value: emp.roleName }))}
+                                    placeholder="Select Item Name"
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col lg={4} className="mt-2">
+                            <Form.Group controlId="searchEmployee">
+                                <Form.Label>Model Number</Form.Label>
+                                <Select
+                                    name="searchspare"
+                                    // value={roleNameFilter ? { label: roleNameFilter, value: roleNameFilter } : null}  // Set the value based on roleNameFilter
+                                    // onChange={(selectedOption) => setRoleNameFilter(selectedOption ? selectedOption.value : '')}  // Update filter on change
+                                    // options={employee.map(emp => ({ label: emp.roleName, value: emp.roleName }))}
+                                    placeholder="Select Model Number"
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col lg={4} className="mt-2">
+                            <Form.Group controlId="searchEmployee">
+                                <Form.Label>Brand Name</Form.Label>
+                                <Select
+                                    name="searchspare"
+                                    // value={roleNameFilter ? { label: roleNameFilter, value: roleNameFilter } : null}  // Set the value based on roleNameFilter
+                                    // onChange={(selectedOption) => setRoleNameFilter(selectedOption ? selectedOption.value : '')}  // Update filter on change
+                                    // options={employee.map(emp => ({ label: emp.roleName, value: emp.roleName }))}
+                                    placeholder="Select Brand Name"
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col lg={4} className="mt-2">
+                            <Form.Group controlId="searchEmployee">
+                                <Form.Label>Stock Location</Form.Label>
+                                <Select
+                                    name="searchspare"
+                                    // value={roleNameFilter ? { label: roleNameFilter, value: roleNameFilter } : null}  // Set the value based on roleNameFilter
+                                    // onChange={(selectedOption) => setRoleNameFilter(selectedOption ? selectedOption.value : '')}  // Update filter on change
+                                    // options={employee.map(emp => ({ label: emp.roleName, value: emp.roleName }))}
+                                    placeholder="Select Stock Location"
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col lg={4} className="mt-2">
+                            <Form.Group controlId="searchEmployee">
+                                <Form.Label>Supplier Name</Form.Label>
+                                <Select
+                                    name="searchspare"
+                                    // value={roleNameFilter ? { label: roleNameFilter, value: roleNameFilter } : null}  // Set the value based on roleNameFilter
+                                    // onChange={(selectedOption) => setRoleNameFilter(selectedOption ? selectedOption.value : '')}  // Update filter on change
+                                    // options={employee.map(emp => ({ label: emp.roleName, value: emp.roleName }))}
+                                    placeholder="Select Supplier Name"
+                                />
+                            </Form.Group>
+                        </Col>
+
+
+                        <Col lg={4} className="align-items-end d-flex justify-content-end mt-3">
+                            <ButtonGroup aria-label="Basic example" className="w-100">
+                                <Button type="button" variant="primary" >
+                                    <i className="ri-loop-left-line"></i>
+                                </Button>
+                                &nbsp;
+                                <Button type="submit" variant="primary">
+                                    Search
+                                </Button>
+                            </ButtonGroup>
+                        </Col>
+                    </Row>
+                </Form>
+                <Row className='mt-3'>
+                    <div className="d-flex justify-content-end bg-light p-1">
+                        <div className="app-search d-none d-lg-block me-4">
+                        </div>
+                    </div>
+                </Row>
+            </div>
 
             {loading ? (
                 <div className='loader-container'>
@@ -181,7 +277,8 @@ const DefectiveSparePart = () => {
                                                     ))}
                                                     <td><Link to={`/pages/RoleMasterinsert/${item.id}`}>
                                                         <Button variant='primary' className='icon-padding text-white'>
-                                                            <i className='fs-18 ri-edit-line text-white' ></i>
+                                                            {/* <i className='fs-18 ri-edit-line text-white' ></i> */}
+                                                            Defective
                                                         </Button>
                                                     </Link>
                                                     </td>
@@ -216,4 +313,4 @@ const DefectiveSparePart = () => {
     );
 };
 
-export default DefectiveSparePart;
+export default NonDefectiveSparePart;

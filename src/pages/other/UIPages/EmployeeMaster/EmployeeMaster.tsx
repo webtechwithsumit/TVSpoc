@@ -30,16 +30,16 @@ interface Column {
     visible: boolean;
 }
 
-interface EmployeeList {
-    empId: string;
-    employeeName: string;
-}
+// interface EmployeeList {
+//     empId: string;
+//     employeeName: string;
+// }
 
-interface ModuleProjectList {
-    id: string;
-    projectName: string
-    moduleName: string
-}
+// interface ModuleProjectList {
+//     id: string;
+//     projectName: string
+//     moduleName: string
+// }
 
 
 const EmployeeMaster = () => {
@@ -47,9 +47,9 @@ const EmployeeMaster = () => {
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [employeeList, setEmployeeList] = useState<EmployeeList[]>([]);
-    const [downloadCsv, setDownloadCsv] = useState<Employee[]>([]);
-    const [projectList, setProjectList] = useState<ModuleProjectList[]>([])
+    // const [employeeList, setEmployeeList] = useState<EmployeeList[]>([]);
+    // const [downloadCsv, setDownloadCsv] = useState<Employee[]>([]);
+    // const [projectList, setProjectList] = useState<ModuleProjectList[]>([])
     const [searchTriggered, setSearchTriggered] = useState(false);
 
 

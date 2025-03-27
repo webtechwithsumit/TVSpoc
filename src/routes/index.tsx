@@ -1,25 +1,17 @@
 import React from 'react'
 import { Route, RouteProps } from 'react-router-dom'
-
-// components
 import PrivateRoute from './PrivateRoute'
 
-// lazy load all the views
 
-// auth
 const Login = React.lazy(() => import('../pages/auth/Login'))
 const Register = React.lazy(() => import('../pages/auth/Register'))
 const Logout = React.lazy(() => import('../pages/auth/Logout'))
 const ForgotPassword = React.lazy(() => import('../pages/auth/ForgotPassword'))
 const LockScreen = React.lazy(() => import('../pages/auth/LockScreen'))
 
-// // dashboard
 const Dashboard = React.lazy(() => import('../pages/Dashboard'))
-
-// // pages
 const ProfilePages = React.lazy(() => import('../pages/other/Profile/'))
 
-// // Custom Pages Components
 const EmployeeMaster = React.lazy(() => import('../pages/other/UIPages/EmployeeMaster/EmployeeMaster.tsx'))
 const EmployeeMasterinsert = React.lazy(() => import('../pages/other/UIPages/EmployeeMaster/EmployeeMasterinsert.tsx'))
 
@@ -27,46 +19,31 @@ const EmployeeMasterinsert = React.lazy(() => import('../pages/other/UIPages/Emp
 const DepartmentMaster = React.lazy(() => import('../pages/other/UIPages/DepartmentMaster/DepartmentMaster.tsx'))
 const DepartmentMasterinsert = React.lazy(() => import('../pages/other/UIPages/DepartmentMaster/DepartmentMasterinsert.tsx'))
 
-const ProductTypeMaster = React.lazy(() => import('../pages/other/UIPages/ProductType/ProductTypeMaster.tsx'))
-const ProductTypeMasterinsert = React.lazy(() => import('../pages/other/UIPages/ProductType/ProductTypeinsertMaster.tsx'))
+const QualityCheckMaster = React.lazy(() => import('../pages/other/UIPages/QualityCheckMaster/QualityCheckMaster.tsx'))
 
-//Path added by sameer
-const QualityCheckMaster = React.lazy(() => import('../pages/other/UIPages/ProductType/QualityCheckMaster.tsx'))
-const QualityCheckMasterInsert = React.lazy(() => import('../pages/other/UIPages/ProductType/QualityCheckMasterInsert.tsx'))
+const DefectiveSparePart = React.lazy(() => import('../pages/other/UIPages/DefectiveSparePart/DefectiveSparePart.tsx'))
 
-const DefectiveSparePart = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/DefectiveSparePart.tsx'))
-const DefectiveSparePartInsert = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/DefectiveSparePartInsert.tsx'))
+const NonDefectiveSparePart = React.lazy(() => import('../pages/other/UIPages/NonDefectiveSparePart/NonDefectiveSparePart.tsx'))
 
-const SparepartInventory = React.lazy(() => import('../pages/other/UIPages/ProductType/SparepartInventory.tsx'))
-const SparepartInventoryInsert = React.lazy(() => import('../pages/other/UIPages/ProductType/SparepartInventoryInsert.tsx'))
+const SparepartInventory = React.lazy(() => import('../pages/other/UIPages/SparepartInventory/SparepartInventory.tsx'))
+const SparepartInventoryInsert = React.lazy(() => import('../pages/other/UIPages/SparepartInventory/SparepartInventoryInsert.tsx'))
 
 const CustomerMaster = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/CustomerMaster.tsx'))
 const CustomerMasterInsert = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/CustomerMasterInsert.tsx'))
 
-const ExpiredSparePart = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/ExpiredSparePart.tsx'))
-const ExpiredSparePartInsert = React.lazy(() => import('../pages/other/UIPages/CustomerMaster/ExpiredSparePartInsert.tsx'))
+const ExpiredSparePart = React.lazy(() => import('../pages/other/UIPages/ExpiredSparePart/ExpiredSparePart.tsx'))
 
 const TicketMaster = React.lazy(() => import('../pages/other/UIPages/TicketManagement/TicketMaster.tsx'))
 const TicketMasterinsert = React.lazy(() => import('../pages/other/UIPages/TicketManagement/TicketMasterinsert.tsx'))
 
-
-
-
-
 const RoleMaster = React.lazy(() => import('../pages/other/UIPages/RoleMaster/Rolemaster.tsx'))
 const RoleMasterinsert = React.lazy(() => import('../pages/other/UIPages/RoleMaster/RoleMasterinsert.tsx'))
-
 
 const ProductMaster = React.lazy(() => import('../pages/other/UIPages/Inventory/InventoryMaster.tsx'))
 const ProductMasterinsert = React.lazy(() => import('../pages/other/UIPages/Inventory/InventoryMasterinsert.tsx'))
 
-
-
-
 const CommingSoon = React.lazy(() => import('../pages/other/UIPages/CommingSoon.tsx'))
 
-
-// // error
 const Error404 = React.lazy(() => import('../pages/error/Error404'))
 const Error404Alt = React.lazy(() => import('../pages/error/Error404Alt'))
 const Error500 = React.lazy(() => import('../pages/error/Error500'))
@@ -83,7 +60,6 @@ export interface RoutesProps {
 	children?: RoutesProps[]
 }
 
-// dashboards
 const dashboardRoutes: RoutesProps = {
 	path: '/admin',
 	name: 'Dashboards',
@@ -108,7 +84,6 @@ const dashboardRoutes: RoutesProps = {
 	],
 }
 
-// pages
 const customPagesRoutes = {
 	path: '/pages',
 	name: 'Pages',
@@ -121,15 +96,12 @@ const customPagesRoutes = {
 			element: <PrivateRoute element={<ProfilePages />} roles={['DME', 'User']} />,
 			route: PrivateRoute,
 		},
-
-
 		{
 			path: '/pages/EmployeeMaster',
 			name: 'EmployeeMaster',
 			element: <EmployeeMaster />,
 			route: PrivateRoute,
 		},
-
 		{
 			path: '/pages/EmployeeMasterinsert',
 			name: 'EmployeeMasterinsert',
@@ -142,14 +114,12 @@ const customPagesRoutes = {
 			element: <EmployeeMasterinsert />,
 			route: PrivateRoute,
 		},
-
 		{
 			path: '/pages/DepartmentMaster',
 			name: 'DepartmentMaster',
 			element: <DepartmentMaster />,
 			route: PrivateRoute,
 		},
-
 		{
 			path: '/pages/DepartmentMasterinsert',
 			name: 'DepartmentMasterinsert',
@@ -162,29 +132,6 @@ const customPagesRoutes = {
 			element: <DepartmentMasterinsert />,
 			route: PrivateRoute,
 		},
-
-		{
-			path: '/pages/ProductTypeMaster',
-			name: 'ProductTypeMaster',
-			element: <ProductTypeMaster />,
-			route: PrivateRoute,
-		},
-
-		{
-			path: '/pages/ProductTypeMasterinsert',
-			name: 'ProductTypeMasterinsert',
-			element: <ProductTypeMasterinsert />,
-			route: PrivateRoute,
-		},
-		{
-			path: '/pages/ProductTypeMasterinsert/:id',
-			name: 'ProductTypeMasterinsert',
-			element: <ProductTypeMasterinsert />,
-			route: PrivateRoute,
-		},
-
-		//below work is started by sameer
-		
 		{
 			path: '/pages/SparepartInventory',
 			name: 'SparepartInventory',
@@ -210,27 +157,9 @@ const customPagesRoutes = {
 			route: PrivateRoute,
 		},
 		{
-			path: '/pages/QualityCheckMasterInsert',
-			name: 'QualityCheckMasterInsert',
-			element: <QualityCheckMasterInsert />,
-			route: PrivateRoute,
-		},
-		{
-			path: '/pages/QualityCheckMasterInsert/:id',
-			name: 'QualityCheckMasterInsert',
-			element: <QualityCheckMasterInsert />,
-			route: PrivateRoute,
-		},
-		{
-			path: '/pages/DefectiveSparePartInsert',
-			name: 'DefectiveSparePartInsert',
-			element: <DefectiveSparePartInsert />,
-			route: PrivateRoute,
-		},
-		{
-			path: '/pages/DefectiveSparePartInsert/:id',
-			name: 'DefectiveSparePartInsert',
-			element: <DefectiveSparePartInsert />,
+			path: '/pages/NonDefectiveSparePart',
+			name: 'NonDefectiveSparePart',
+			element: <NonDefectiveSparePart />,
 			route: PrivateRoute,
 		},
 		{
@@ -240,25 +169,11 @@ const customPagesRoutes = {
 			route: PrivateRoute,
 		},
 		{
-			path: '/pages/ExpiredSparePartInsert',
-			name: 'ExpiredSparePartInsert',
-			element: <ExpiredSparePartInsert />,
-			route: PrivateRoute,
-		},
-		{
-			path: '/pages/ExpiredSparePartInsert/:id',
-			name: 'ExpiredSparePartInsert',
-			element: <ExpiredSparePartInsert />,
-			route: PrivateRoute,
-		},
-		{
 			path: '/pages/CustomerMaster',
 			name: 'CustomerMaster',
 			element: <CustomerMaster />,
 			route: PrivateRoute,
 		},
-
-
 		{
 			path: '/pages/CustomerMasterInsert',
 			name: 'CustomerMasterInsert',
@@ -278,13 +193,6 @@ const customPagesRoutes = {
 			route: PrivateRoute,
 		},
 		{
-			path: '/pages/DefectiveSparePart/:id',
-			name: 'DefectiveSparePart',
-			element: <DefectiveSparePart />,
-			route: PrivateRoute,
-		},
-		//below work is started by sameer for ticket master
-		{
 			path: '/pages/TicketMaster',
 			name: 'TicketMaster',
 			element: <TicketMaster />,
@@ -302,15 +210,12 @@ const customPagesRoutes = {
 			element: <TicketMasterinsert />,
 			route: PrivateRoute,
 		},
-
-
 		{
 			path: '/pages/RoleMaster',
 			name: 'RoleMaster',
 			element: <RoleMaster />,
 			route: PrivateRoute,
 		},
-
 		{
 			path: '/pages/RoleMasterinsert',
 			name: 'RoleMasterinsert',
@@ -342,14 +247,12 @@ const customPagesRoutes = {
 			element: <ProductMasterinsert />,
 			route: PrivateRoute,
 		},
-
 		{
 			path: '/pages/CommingSoon',
 			name: 'CommingSoon',
 			element: <CommingSoon />,
 			route: PrivateRoute,
 		},
-
 		{
 			path: 'pages/error-404-alt',
 			name: 'Error - 404-alt',
@@ -359,8 +262,6 @@ const customPagesRoutes = {
 	],
 }
 
-
-// auth
 const authRoutes: RoutesProps[] = [
 	{
 		path: '/auth/login',
@@ -394,7 +295,6 @@ const authRoutes: RoutesProps[] = [
 	},
 ]
 
-// public routes
 const otherPublicRoutes = [
 	{
 		path: '*',
@@ -416,7 +316,6 @@ const otherPublicRoutes = [
 	},
 ]
 
-// flatten the list of all nested routes
 const flattenRoutes = (routes: RoutesProps[]) => {
 	let flatRoutes: RoutesProps[] = []
 
@@ -430,7 +329,6 @@ const flattenRoutes = (routes: RoutesProps[]) => {
 	return flatRoutes
 }
 
-// All routes
 const authProtectedRoutes = [dashboardRoutes, customPagesRoutes]
 const publicRoutes = [...authRoutes, ...otherPublicRoutes]
 

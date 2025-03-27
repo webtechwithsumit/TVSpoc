@@ -33,7 +33,7 @@ const ProfilePages = () => {
 									</div>
 									<div>
 										<h4 className="mt-4 fs-17 ellipsis">
-											{user?.employeeName || 'User Name'}
+											{user?.userName || 'User Name'}
 										</h4>
 										<p className="font-13"> User Experience Specialist</p>
 										<p className="text-muted mb-0">

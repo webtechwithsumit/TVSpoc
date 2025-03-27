@@ -6,7 +6,7 @@ import config from '@/config';
 type User = {
 	userID?: string;
 	userName?: string;
-	role: number;
+	role: string;
 	status: number;
 	createdBy?: string;
 	createdDate?: string;

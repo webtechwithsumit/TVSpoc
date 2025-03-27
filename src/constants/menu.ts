@@ -57,17 +57,8 @@ const MENU_ITEMS: MenuItemTypes[] = [
 				icon: 'ri-group-line',
 				parentKey: 'Masters',
 			},
-			// {
-			// 	key: 'Notification Master',
-			// 	label: ' Notification Master',
-			// 	url: '/pages/Addholiday',
-			// 	icon: 'ri-calendar-todo-line',
-			// 	parentKey: 'Masters',
-
-			// },
 		],
 	},
-//Menu added by sameer
 	{
 		key: 'Bussiness Master',
 		label: 'Bussiness Master',
@@ -90,7 +81,7 @@ const MENU_ITEMS: MenuItemTypes[] = [
 			{
 				key: 'Non Defective Spare Part',
 				label: 'Non Defective Spare Part',
-				url: '/pages/CustomerMaster',
+				url: '/pages/NonDefectiveSparePart',
 				icon: 'ri-slideshow-line',
 				parentKey: 'Bussiness Master',
 			},
@@ -101,7 +92,6 @@ const MENU_ITEMS: MenuItemTypes[] = [
 				icon: 'ri-slideshow-line',
 				parentKey: 'Bussiness Master',
 			},
-			
 			{
 				key: 'Expired Spare Part',
 				label: 'Expired Spare Part',
@@ -109,8 +99,6 @@ const MENU_ITEMS: MenuItemTypes[] = [
 				icon: 'ri-slideshow-line',
 				parentKey: 'Bussiness Master',
 			},
-		
-
 		],
 	},
 	{
@@ -156,29 +144,6 @@ const MENU_ITEMS: MenuItemTypes[] = [
 
 		],
 	},
-	// {
-	// 	key: 'Profile Settings',
-	// 	label: 'Profile Settings',
-	// 	icon: 'ri-loop-left-line',
-	// 	children: [
-	// 		{
-	// 			key: 'Profile Details',
-	// 			label: 'Profile Details',
-	// 			url: '/pages/ProfileDetails',
-	// 			icon: 'ri-slideshow-line',
-	// 			parentKey: 'Profile Settings',
-	// 		},
-	// 		{
-	// 			key: 'Update Profile',
-	// 			label: 'Update Profile',
-	// 			url: '/pages/UpdaterPofile',
-	// 			icon: 'ri-slideshow-line',
-	// 			parentKey: 'Profile Settings',
-	// 		},
-	// 	],
-	// },
-
-
 ]
 
 const HORIZONTAL_MENU_ITEMS: MenuItemTypes[] = [
