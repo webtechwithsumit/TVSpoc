@@ -6,7 +6,7 @@ import config from '@/config';
 type User = {
 	userID?: string;
 	userName?: string;
-	role: string;
+	roles: string;
 	status: number;
 	createdBy?: string;
 	createdDate?: string;
@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				const userData: User = {
 					userID: employeeDetails.userID,
 					userName: employeeDetails.userName,
-					role: employeeDetails.role,
+					roles: employeeDetails.role,
 					status: employeeDetails.status,
 					token: data.token,
 				};

@@ -52,7 +52,7 @@ const SparepartInventory = () => {
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    
+
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -112,7 +112,7 @@ const SparepartInventory = () => {
 
     return (
         <div className='p-3 mt-3 bg-white'>
-           <Row className=' mb-2 px-2'>
+            <Row className=' mb-2 px-2'>
                 <div className="d-flex justify-content-between profilebar p-1">
                     <h4 className='text-primary d-flex align-items-center m-0'><i className="ri-file-list-line me-2 text-primary "></i>Spare Part Inventory List</h4>
                     <div className="d-flex justify-content-end bg-light w-50 profilebar">
@@ -121,13 +121,13 @@ const SparepartInventory = () => {
                         </Button>
                         <Link to='/pages/SparepartInventoryInsert'>
                             <Button variant="primary" className="">
-                            Single Add Spare Part
+                                Single Add Spare Part
                             </Button>
                         </Link>
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        <Link to='/pages/SparepartInventoryInsert'>
+                        <Link to='/pages/SpareBulkInventory'>
                             <Button variant="primary" className="">
-                            Bulk Upload Spare Part
+                                Bulk Upload Spare Part
                             </Button>
                         </Link>
                     </div>

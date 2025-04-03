@@ -46,10 +46,7 @@ const RoleMaster = () => {
     const [columns, setColumns] = useState<Column[]>([
         { id: 'roleName', label: 'Role Name', visible: true },
         { id: 'status', label: 'Status', visible: true },
-        { id: 'createdBy', label: 'Created By', visible: true },
-        { id: 'createdDate', label: 'Created Date', visible: true },
-        { id: 'updatedBy', label: 'Updated By', visible: true },
-        { id: 'updatedDate', label: 'Updated Date', visible: true },
+
     ]);
 
     const handleOnDragEnd = (result: any) => {
@@ -112,7 +109,7 @@ const RoleMaster = () => {
             <div className='bg-white p-2 pb-2'>
                 <Form onSubmit={async (e) => e.preventDefault()}>
                     <Row>
-                        <Col lg={8} className="mt-2">
+                        <Col lg={4} className="mt-2">
                             <Form.Group controlId="searchEmployee">
                                 <Form.Label>Role Name</Form.Label>
                                 <Select
@@ -121,6 +118,18 @@ const RoleMaster = () => {
                                     // onChange={(selectedOption) => setRoleNameFilter(selectedOption ? selectedOption.value : '')}  // Update filter on change
                                     // options={employee.map(emp => ({ label: emp.roleName, value: emp.roleName }))}
                                     placeholder="Select Role Name"
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col lg={4} className="mt-2">
+                            <Form.Group controlId="searchEmployee">
+                                <Form.Label>Status</Form.Label>
+                                <Select
+                                    name="searchRole"
+                                    // value={roleNameFilter ? { label: roleNameFilter, value: roleNameFilter } : null}  // Set the value based on roleNameFilter
+                                    // onChange={(selectedOption) => setRoleNameFilter(selectedOption ? selectedOption.value : '')}  // Update filter on change
+                                    // options={employee.map(emp => ({ label: emp.roleName, value: emp.roleName }))}
+                                    placeholder="Select Status"
                                 />
                             </Form.Group>
                         </Col>
@@ -138,6 +147,13 @@ const RoleMaster = () => {
                         </Col>
                     </Row>
                 </Form>
+                <Row className='mt-3'>
+                    <div className="d-flex justify-content-end bg-light p-1">
+                        <div className="app-search d-none d-lg-block me-4">
+                        </div>
+
+                    </div>
+                </Row>
             </div>
 
             {loading ? (
@@ -175,7 +191,7 @@ const RoleMaster = () => {
                                                         )}
                                                     </Draggable>
                                                 ))}
-                                                <th>Action</th>
+                                                <th className='text-center'>Action</th>
                                             </tr>
                                         )}
                                     </Droppable>
@@ -193,7 +209,7 @@ const RoleMaster = () => {
                                                     )}
                                                 </td>
                                             ))}
-                                            <td>
+                                            <td className='text-center'>
                                                 <Link to={`/pages/RoleMasterinsert/${item.id}`}>
                                                     <Button variant='primary' className='icon-padding text-white'>
                                                         <i className='fs-18 ri-edit-line text-white'></i>

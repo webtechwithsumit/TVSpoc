@@ -60,8 +60,25 @@ const MENU_ITEMS: MenuItemTypes[] = [
 		],
 	},
 	{
-		key: 'Bussiness Master',
-		label: 'Bussiness Master',
+		key: 'Businessmaster',
+		label: ' Business Master',
+		isTitle: false,
+		icon: 'ri-settings-3-line',
+		url: '/pages/ProductMaster',
+		children: [
+			{
+				key: 'Role Name',
+				label: ' Customer Master',
+				url: '/pages/CustomerMaster',
+				icon: 'ri-calendar-todo-line',
+				parentKey: 'Businessmaster',
+			},
+
+		],
+	},
+	{
+		key: 'InventoryMasters',
+		label: 'Inventory Master',
 		icon: 'ri-loop-left-line',
 		children: [
 			{
@@ -69,35 +86,35 @@ const MENU_ITEMS: MenuItemTypes[] = [
 				label: 'Spare Part Master',
 				url: '/pages/SparepartInventory',
 				icon: 'ri-slideshow-line',
-				parentKey: 'Bussiness Master',
+				parentKey: 'InventoryMasters',
 			},
 			{
 				key: 'Quality Check Master',
 				label: 'Quality Check Master',
 				url: '/pages/QualityCheckMaster',
 				icon: 'ri-slideshow-line',
-				parentKey: 'Bussiness Master',
+				parentKey: 'InventoryMasters',
 			},
 			{
 				key: 'Non Defective Spare Part',
 				label: 'Non Defective Spare Part',
 				url: '/pages/NonDefectiveSparePart',
 				icon: 'ri-slideshow-line',
-				parentKey: 'Bussiness Master',
+				parentKey: 'InventoryMasters',
 			},
 			{
 				key: 'Defective Spare Part',
 				label: 'Defective Spare Part',
 				url: '/pages/DefectiveSparePart',
 				icon: 'ri-slideshow-line',
-				parentKey: 'Bussiness Master',
+				parentKey: 'InventoryMasters',
 			},
 			{
 				key: 'Expired Spare Part',
 				label: 'Expired Spare Part',
 				url: '/pages/ExpiredSparePart',
 				icon: 'ri-slideshow-line',
-				parentKey: 'Bussiness Master',
+				parentKey: 'InventoryMasters',
 			},
 		],
 	},
@@ -141,6 +158,29 @@ const MENU_ITEMS: MenuItemTypes[] = [
 				icon: 'ri-slideshow-line',
 				parentKey: 'TicketManagement',
 			},
+
+		],
+	},
+	{
+		key: 'Profile',
+		label: 'Settings',
+		icon: 'ri-settings-3-line',
+		children: [
+			{
+				key: 'Porfile',
+				label: 'Profile',
+				url: '/pages/TicketMaster',
+				icon: 'ri-slideshow-line',
+				parentKey: 'Profile',
+			},
+			{
+				key: '',
+				label: 'Change Password',
+				url: '/pages/AssignEngineerMaster',
+				icon: 'ri-slideshow-line',
+				parentKey: 'Profile',
+			},
+
 
 		],
 	},

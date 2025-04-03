@@ -30,16 +30,7 @@ interface Column {
     visible: boolean;
 }
 
-// interface EmployeeList {
-//     empId: string;
-//     employeeName: string;
-// }
 
-// interface ModuleProjectList {
-//     id: string;
-//     projectName: string
-//     moduleName: string
-// }
 
 
 const EmployeeMaster = () => {
@@ -47,9 +38,6 @@ const EmployeeMaster = () => {
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    // const [employeeList, setEmployeeList] = useState<EmployeeList[]>([]);
-    // const [downloadCsv, setDownloadCsv] = useState<Employee[]>([]);
-    // const [projectList, setProjectList] = useState<ModuleProjectList[]>([])
     const [searchTriggered, setSearchTriggered] = useState(false);
 
 
@@ -193,7 +181,7 @@ const EmployeeMaster = () => {
         <div className='p-3 mt-3 bg-white'>
             <Row className=' mb-2 px-2'>
                 <div className="d-flex justify-content-between profilebar p-1">
-                    <h4 className='text-primary d-flex align-items-center m-0'><i className="ri-file-list-line me-2 text-primary "></i> Manage Employee List </h4>
+                    <h4 className='text-primary d-flex align-items-center m-0'><i className="ri-file-list-line me-2 text-primary "></i>  Employee Master </h4>
                     <div className="d-flex justify-content-end bg-light w-50 profilebar">
                         <Button variant="primary" className="me-2">
                             Download CSV
@@ -221,10 +209,10 @@ const EmployeeMaster = () => {
                     <Row>
                         <Col lg={4} className="mt-2">
                             <Form.Group controlId="searchEmployee">
-                                <Form.Label>Manager Name</Form.Label>
+                                <Form.Label>Employee Name</Form.Label>
                                 <Select
                                     name="searchEmployee"
-                                    placeholder="Select Manager Name"
+                                    placeholder="Select Employee Name"
                                     className="h45"
                                 />
                             </Form.Group>

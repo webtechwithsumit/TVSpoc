@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent } from 'react'; 
+import { useEffect, useState, ChangeEvent } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import config from '@/config';
@@ -90,7 +90,7 @@ const RoleMasterInsert = () => {
         }
 
         const now = new Date().toISOString();
-        const empCode = `${user?.userName}${user?.id}`;
+        const empCode = `${user?.userName}-${user?.userID}`;
 
         const payload = {
             ...manager,

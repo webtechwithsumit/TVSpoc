@@ -46,7 +46,7 @@ export default function useLogin() {
 				saveSession({
 					userID: employeeDetails.userID || '',
 					userName: employeeDetails.userName || '',
-					role: employeeDetails.role || '',
+					roles: employeeDetails.role || '',
 					status: employeeDetails.status || '',
 					token: data.token,
 				});

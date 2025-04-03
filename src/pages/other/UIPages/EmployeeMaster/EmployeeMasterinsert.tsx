@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import config from '@/config';
 import { toast } from 'react-toastify';
 import axiosInstance from '@/utils/axiosInstance';
+import Select from 'react-select';
 
 interface Employee {
     id: number;
@@ -14,17 +15,24 @@ interface Employee {
     managerName: string;
     departmentID: number;
     officeLandline: string;
+    roleName: string;
     departmentName: string;
     extensionNumber: string;
     password: string;
     status: number;
     createdBy: string;
     updatedBy: string;
-    roleName: string;
     roleID: number;
 }
+interface DepartmentList {
+    departmentName: string
+    id: number
+}
 
-
+interface RoleList {
+    id: number
+    roleName: string
+}
 
 
 
@@ -33,6 +41,8 @@ const EmployeeMasterInsert = () => {
     const navigate = useNavigate();
     const [editMode, setEditMode] = useState<boolean>(false);
     const [empName, setEmpName] = useState<string | null>(null);
+    const [roleList, setRoleList] = useState<RoleList[]>([]);
+    const [departmentList, setDepartmentList] = useState<DepartmentList[]>([]);
     const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
     const [employee, setEmployee] = useState<Employee>({
         id: 0,
@@ -89,6 +99,26 @@ const EmployeeMasterInsert = () => {
     };
 
 
+    useEffect(() => {
+        const fetchData = async (endpoint: string, setter: Function, listName: string) => {
+            try {
+                const response = await axiosInstance.get(`${config.API_URL}/${endpoint}`);
+                if (response.data.isSuccess) {
+                    setter(response.data[listName]);
+                } else {
+                    console.error(response.data.message);
+                }
+            } catch (error) {
+                console.error(`Error fetching data from ${endpoint}:`, error);
+            }
+        };
+
+        fetchData('CommonDropdown/GetDepartmentMasterList', setDepartmentList, 'activeDepartmentsDDL');
+        fetchData('CommonDropdown/GetRoleMasterList', setRoleList, 'activeRolesDDL');
+    }, []);
+
+
+
     const handleChange = (e: ChangeEvent<any> | null, name?: string, value?: any) => {
         if (e) {
             const { name: eventName, value, type } = e.target;
@@ -100,7 +130,7 @@ const EmployeeMasterInsert = () => {
                     [eventName]: checked
                 });
             } else if (type === 'radio') {
-                const parsedValue = parseInt(value, 10); // Parse radio button value as an integer
+                const parsedValue = parseInt(value, 10);
                 setEmployee({
                     ...employee,
                     [eventName]: parsedValue
@@ -147,8 +177,21 @@ const EmployeeMasterInsert = () => {
         };
 
         try {
-            const apiUrl = `${config.API_URL}/EmployeeMaster/CreateEmployeeMaster`;
-            const response = await axiosInstance.post(apiUrl, payload);
+
+            let apiUrl = `${config.API_URL}/EmployeeMaster/CreateEmployeeMaster`;
+
+            if (editMode && id) {
+                apiUrl = `${config.API_URL}/EmployeeMaster/UpdateEmployeeMaster/${id}`;
+            }
+
+            const method = editMode && id ? 'PUT' : 'POST';
+
+            const response = await axiosInstance({
+                method,
+                url: apiUrl,
+                data: payload
+            });
+
             if (response.status === 200) {
                 navigate('/pages/EmployeeMaster', {
                     state: {
@@ -219,6 +262,55 @@ const EmployeeMasterInsert = () => {
                                         className={validationErrors.email ? "input-border" : ""}
                                     />
                                     {validationErrors.email && <small className="text-danger">{validationErrors.email}</small>}
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6}>
+                                <Form.Group controlId="departmentName" className="mb-3">
+                                    <Form.Label>Department Name  <span className='text-danger'>*</span></Form.Label>
+                                    <Select
+                                        name="departmentName"
+                                        value={departmentList.find((emp) => emp.departmentName === employee.departmentName)}
+                                        onChange={(selectedOption) => {
+                                            setEmployee({
+                                                ...employee,
+                                                departmentName: selectedOption?.departmentName || "",
+                                            });
+                                        }}
+                                        getOptionLabel={(emp) => emp.departmentName}
+                                        getOptionValue={(emp) => emp.departmentName}
+                                        options={departmentList}
+                                        isSearchable={true}
+                                        placeholder="Select Department Name"
+                                        className={validationErrors.departmentName ? " input-border" : "  "}
+                                    />
+                                    {validationErrors.departmentName && (
+                                        <small className="text-danger">{validationErrors.departmentName}</small>
+                                    )}
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6}>
+                                <Form.Group controlId="roleName" className="mb-3">
+                                    <Form.Label>Role Name  <span className='text-danger'>*</span></Form.Label>
+                                    <Select
+                                        name="roleName"
+                                        value={roleList.find((emp) => emp.roleName === employee.roleName)}
+                                        onChange={(selectedOption) => {
+                                            setEmployee({
+                                                ...employee,
+                                                roleName: selectedOption?.roleName || "",
+                                                roleID: selectedOption?.id || 0,
+                                            });
+                                        }}
+                                        getOptionLabel={(emp) => emp.roleName}
+                                        getOptionValue={(emp) => emp.roleName}
+                                        options={roleList}
+                                        isSearchable={true}
+                                        placeholder="Select Role Name"
+                                        className={validationErrors.roleName ? " input-border" : "  "}
+                                    />
+                                    {validationErrors.roleName && (
+                                        <small className="text-danger">{validationErrors.roleName}</small>
+                                    )}
                                 </Form.Group>
                             </Col>
                             <Col lg={6}>
@@ -304,6 +396,7 @@ const EmployeeMasterInsert = () => {
                                     </div>
                                 </Form.Group>
                             </Col>
+
                             <Col className='align-items-end d-flex justify-content-end mb-3'>
                                 <div>
                                     <Link to={'/pages/EmployeeMaster'}>

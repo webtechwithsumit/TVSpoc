@@ -9,12 +9,6 @@ interface Department {
     id: number;
     departmentName: string;
     departmentCode: string;
-    departmentDescription: string;
-    isDefault: number;
-    defaultAuthorisedSignatoryID: string;
-    defaultAuthorisedSignatory: string;
-    defaultAssigneeID: string;
-    defaultAssignee: string;
     status: number;
     createdBy: string;
     updatedBy: string;
@@ -31,12 +25,6 @@ const DepartmentMasterInsert = () => {
         id: 0,
         departmentName: '',
         departmentCode: '',
-        departmentDescription: '',
-        isDefault: 0,
-        defaultAuthorisedSignatoryID: '',
-        defaultAuthorisedSignatory: '',
-        defaultAssigneeID: '',
-        defaultAssignee: '',
         status: 0,
         createdBy: '',
         updatedBy: '',
@@ -109,13 +97,13 @@ const DepartmentMasterInsert = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-    
+
         if (!validateFields()) {
             toast.dismiss();
             toast.error('Please fill in all required fields.');
             return;
         }
-    
+
         const payload = {
             ...departments,
             createdBy: editMode ? departments.createdBy : empName,
@@ -123,23 +111,23 @@ const DepartmentMasterInsert = () => {
             createdDate: new Date().toISOString(),
             updatedDate: new Date().toISOString(),
         };
-    
+
         try {
             let apiUrl = `${config.API_URL}/DepartmentMaster/CreateDepartmentMaster`; // Default to create URL
-            
+
             // If in edit mode, use the update API URL with PUT method
             if (editMode && id) {
-                apiUrl = `https://tvsapi.clay.in/api/DepartmentMaster/UpdateDepartmentMaster/${id}`;
+                apiUrl = `${config.API_URL}/DepartmentMaster/UpdateDepartmentMaster/${id}`;
             }
-    
+
             const method = editMode && id ? 'PUT' : 'POST'; // Use PUT for update, POST for create
-    
+
             const response = await axiosInstance({
                 method,
                 url: apiUrl,
                 data: payload
             });
-    
+
             if (response.status === 200) {
                 navigate('/pages/departmentMaster', {
                     state: {
@@ -157,7 +145,7 @@ const DepartmentMasterInsert = () => {
             console.error('Error submitting department:', error);
         }
     };
-    
+
 
     return (
         <div>
@@ -171,7 +159,7 @@ const DepartmentMasterInsert = () => {
                 <div className="bg-white p-2 rounded-3 border">
                     <Form onSubmit={handleSubmit}>
                         <Row>
-                            <Col lg={6}>
+                            <Col lg={4}>
                                 <Form.Group controlId="departmentName" className="mb-3">
                                     <Form.Label><i className="ri-building-line"></i> Department Name</Form.Label>
                                     <Form.Control
@@ -187,7 +175,7 @@ const DepartmentMasterInsert = () => {
                                     )}
                                 </Form.Group>
                             </Col>
-                            <Col lg={6}>
+                            <Col lg={4}>
                                 <Form.Group controlId="departmentCode" className="mb-3">
                                     <Form.Label><i className="ri-building-line"></i> Department Code</Form.Label>
                                     <Form.Control
@@ -204,26 +192,7 @@ const DepartmentMasterInsert = () => {
                                 </Form.Group>
                             </Col>
 
-                            <Col lg={6}>
-                                <Form.Group controlId="departmentDescription" className="mb-3">
-                                    <Form.Label><i className="ri-building-line"></i> Department Description</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        name="departmentDescription"
-                                        value={departments.departmentDescription}
-                                        onChange={handleChange}
-                                        placeholder="Enter Department Description"
-                                        className={validationErrors.departmentDescription ? 'input-border' : ''}
-                                        rows={3}
-                                        maxLength={300}
-                                    />
-                                    {validationErrors.departmentDescription && (
-                                        <small className="text-danger">{validationErrors.departmentDescription}</small>
-                                    )}
-                                </Form.Group>
-                            </Col>
-
-                            <Col lg={2}>
+                            <Col lg={4}>
                                 <Form.Group controlId="status" className="mb-3">
                                     <Form.Label><i className="ri-flag-line"></i> Status</Form.Label>
                                     <div className="d-flex mt-1">
@@ -254,49 +223,9 @@ const DepartmentMasterInsert = () => {
                                 </Form.Group>
                             </Col>
 
-                            <Col lg={6}>
-                                <Form.Group controlId="isDefault" className="mb-3">
-                                    <Form.Label><i className="ri-checkbox-line"></i> Is Default</Form.Label>
-                                    <Form.Check
-                                        type="checkbox"
-                                        name="isDefault"
-                                        checked={departments.isDefault === 1}
-                                        onChange={(e) => {
-                                            setDepartments({
-                                                ...departments,
-                                                isDefault: e.target.checked ? 1 : 0
-                                            });
-                                        }}
-                                        label="Set as Default"
-                                    />
-                                </Form.Group>
-                            </Col>
 
-                            <Col lg={6}>
-                                <Form.Group controlId="defaultAuthorisedSignatory" className="mb-3">
-                                    <Form.Label>Default Authorised Signatory</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="defaultAuthorisedSignatory"
-                                        value={departments.defaultAuthorisedSignatory}
-                                        onChange={handleChange}
-                                        placeholder="Enter Authorised Signatory"
-                                    />
-                                </Form.Group>
-                            </Col>
 
-                            <Col lg={6}>
-                                <Form.Group controlId="defaultAssignee" className="mb-3">
-                                    <Form.Label>Default Assignee</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="defaultAssignee"
-                                        value={departments.defaultAssignee}
-                                        onChange={handleChange}
-                                        placeholder="Enter Assignee"
-                                    />
-                                </Form.Group>
-                            </Col>
+
 
                             <Col className="d-flex justify-content-end mb-3">
                                 <div>

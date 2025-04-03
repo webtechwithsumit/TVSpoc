@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Form, Row, Col, Button, ButtonGroup } from 'react-bootstrap';
-import Select from 'react-select';
-import { Link } from 'react-router-dom';
+import { Form, Row, Col, Button } from 'react-bootstrap';
+// import Select from 'react-select';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import config from '@/config';
+import axiosInstance from '@/utils/axiosInstance';
+import { toast } from 'react-toastify';
 
 function SparepartInventoryInsert() {
+    const { id } = useParams<{ id: any }>();
+    const navigate = useNavigate();
+    const [editMode, setEditMode] = useState<boolean>(false);
     const [formData, setFormData] = useState({
         id: 0,
         item_Name: '',
@@ -28,45 +34,35 @@ function SparepartInventoryInsert() {
         expiry_Date: '',
         batch_Number: '',
         serial_Number: '',
+        status: 0,
         created_By: '',
         created_Date: '',
         updated_By: '',
         updated_Date: '',
     });
 
-    // Fetch data from API and set form data
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('https://tvsapi.clay.in/api/InventorySpare/GetInventorySpare/0');
-                const data = await response.json();
+        if (id) {
+            setEditMode(true);
+            fetchEmployeeById(id);
+        } else {
+            setEditMode(false);
+        }
+    }, [id]);
 
-                if (data.isSuccess && data.inventorySpares.length > 0) {
-                    const sparePart = data.inventorySpares[0];
-                    setFormData(sparePart)
-
-                    // Assuming we are working with the first spare part from the list
-                    //   setFormData({
-                    //     item_Name: sparePart.item_Name,
-                    //     description: sparePart.description,
-                    //     stock_Quantity: sparePart.stock_Quantity,
-                    //     stock_Location: sparePart.stock_Location,
-                    //     expiry_Date: sparePart.expiry_Date.split('T')[0], // Assuming expiry date as restock date
-                    //     serial_Number: sparePart.serial_Number,
-                    //     batch_Number: sparePart.batch_Number,
-                    //     // Map other fields as needed
-                    //     manufacturing_Date: new Date().toISOString(),
-                    //     created_Date: new Date().toISOString(),
-                    //     updated_Date: new Date().toISOString(),
-                    //   });
-                }
-            } catch (error) {
-                console.error('Error fetching inventory spare parts:', error);
+    const fetchEmployeeById = async (id: string) => {
+        try {
+            const response = await axiosInstance.get(`${config.API_URL}/InventorySpare/GetInventorySpare/${id}`);
+            if (response.data.isSuccess) {
+                const fetchedEmployee = response.data.inventorySpares[0];
+                setFormData(fetchedEmployee);
+            } else {
+                console.error(response.data.message);
             }
-        };
-
-        fetchData();
-    }, []);
+        } catch (error) {
+            console.error('Error fetching employee:', error);
+        }
+    };
 
     // Handle input change for text and number fields
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,190 +73,322 @@ function SparepartInventoryInsert() {
         }));
     };
 
-    // Handle Select input change
-    const handleSelectChange = (name: string, value: any) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         // Construct the API request body
-        const requestBody = {
-            id: formData.id,
-            item_Name: formData.item_Name,
-            category: formData.category,
-            brand: formData.brand,
-            model_Number: formData.model_Number,
-            description: formData.description,
-            stock_Quantity: formData.stock_Quantity,
-            reorder_Level: formData.reorder_Level,
-            stock_Location: formData.stock_Location,
-            purchase_Price: formData.purchase_Price,
-            selling_Price: formData.selling_Price,
-            currency: formData.currency,
-            supplier_Name: formData.supplier_Name,
-            supplier_ID: formData.supplier_ID,
-            supplier_Contact: formData.supplier_Contact,
-            voltage_Wattage: formData.voltage_Wattage,
-            connector_Type: formData.connector_Type,
-            cable_Length: formData.cable_Length,
-            warranty_Period: formData.warranty_Period,
-            manufacturing_Date: formData.manufacturing_Date,
-            expiry_Date: formData.expiry_Date,
-            batch_Number: formData.batch_Number,
-            serial_Number: formData.serial_Number,
-            created_By: formData.created_By,
-            created_Date: formData.created_Date,
-            updated_By: formData.updated_By,
-            updated_Date: formData.updated_Date,
-        };
+        const payload = {
+            ...formData,
+            updated_Date: new Date(),
+            created_Date: editMode ? formData.created_Date : new Date(),
+        }
+        console.log(payload)
 
-        // Make the API request
         try {
-            const response = await fetch('https://tvsapi.clay.in/api/InventorySpare/CreateInventorySpare', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestBody),
+            let apiUrl = `${config.API_URL}/InventorySpare/CreateInventorySpare`;
+
+            if (editMode && id) {
+                apiUrl = `${config.API_URL}/InventorySpare/UpdateInventorySpare/${id}`;
+            }
+
+            const method = editMode && id ? 'PUT' : 'POST';
+
+            const response = await axiosInstance({
+                method,
+                url: apiUrl,
+                data: payload
             });
 
-            const data = await response.json();
-            if (data.isSuccess) {
-                alert('Spare part added successfully');
+            if (response.status === 200) {
+                navigate('/pages/SparepartInventory', {
+                    state: {
+                        successMessage: editMode
+                            ? `Record updated successfully!`
+                            : `Record added successfully!`
+                    }
+                });
             } else {
-                alert('Failed to add spare part');
+                toast.error(response.data.message || 'Failed to process request');
             }
-        } catch (error) {
-            console.error('Error submitting spare part:', error);
+        } catch (error: any) {
+            toast.error(error.message || 'Error Adding/Updating');
+            console.error('Error submitting employee:', error);
         }
     };
 
     return (
-        <div className="bg-white p-2 pb-2">
+        <div className="bg-white p-2 pb-2 mt-3">
             <div className="d-flex profilebar p-2 my-2 justify-content-between align-items-center fs-20 rounded-3 border">
                 <h4 className="text-primary m-0">
                     <i className="ri-file-list-line me-2"></i>
-                    <span className="fw-bold">Add Spare Part</span>
+                    <span className="fw-bold">{editMode ? 'Edit Spare Part' : 'Add Spare Part'}</span>
                 </h4>
             </div>
-            <Form onSubmit={handleSubmit}>
-                <Row>
-                    <Col lg={6} className="mt-2">
-                        <Form.Group controlId="item_Name">
-                            <Form.Label>Spare Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="item_Name"
-                                value={formData.item_Name}
-                                onChange={handleInputChange}
-                                placeholder="Enter Spare Name"
-                            />
-                        </Form.Group>
-                    </Col>
 
-                    <Col lg={6} className="mt-2">
-                        <Form.Group controlId="description">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                                placeholder="Enter Description"
-                            />
-                        </Form.Group>
-                    </Col>
+            <div className="bg-white p-2 rounded-3 border">
+                <Form onSubmit={handleSubmit}>
+                    <Row>
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="item_Name">
+                                <Form.Label>Spare Part Name</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="item_Name"
+                                    value={formData.item_Name}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Spare Part Name"
+                                />
+                            </Form.Group>
+                        </Col>
 
-                    <Col lg={6} className="mt-2">
-                        <Form.Group controlId="stock_Quantity">
-                            <Form.Label>Quantity</Form.Label>
-                            <Form.Control
-                                type="number"
-                                name="stock_Quantity"
-                                value={formData.stock_Quantity}
-                                onChange={handleInputChange}
-                                placeholder="Enter Quantity"
-                            />
-                        </Form.Group>
-                    </Col>
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="category">
+                                <Form.Label>Category</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="category"
+                                    value={formData.category}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Category"
+                                />
+                            </Form.Group>
+                        </Col>
 
-                    <Col lg={6} className="mt-2">
-                        <Form.Group controlId="stock_Location">
-                            <Form.Label>Location</Form.Label>
-                            <Select
-                                name="stock_Location"
-                                options={[
-                                    { value: 'Warehouse', label: 'Warehouse' },
-                                    { value: 'Store', label: 'Store' },
-                                    { value: 'Main Office', label: 'Main Office' },
-                                ]}
-                                value={formData.stock_Location ? { value: formData.stock_Location, label: formData.stock_Location } : null}
-                                onChange={(selectedOption) => handleSelectChange('stock_Location', selectedOption?.value)}
-                                placeholder="Select Location"
-                            />
-                        </Form.Group>
-                    </Col>
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="brand">
+                                <Form.Label>Brand</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="brand"
+                                    value={formData.brand}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Brand"
+                                />
+                            </Form.Group>
+                        </Col>
 
-                    <Col lg={6} className="mt-2">
-                        <Form.Group controlId="restockDate">
-                            <Form.Label>Restock Date</Form.Label>
-                            <Form.Control
-                                type="date"
-                                name="expiry_Date"
-                                value={formData.expiry_Date}
-                                onChange={handleInputChange}
-                            />
-                        </Form.Group>
-                    </Col>
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="model_Number">
+                                <Form.Label>Model Number</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="model_Number"
+                                    value={formData.model_Number}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Model Number"
+                                />
+                            </Form.Group>
+                        </Col>
 
-                    <Col lg={6} className="mt-2">
-                        <Form.Group controlId="serialNumber">
-                            <Form.Label>Serial Number</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="serial_Number"
-                                value={formData.serial_Number}
-                                onChange={handleInputChange}
-                                placeholder="Enter Serial Number"
-                            />
-                        </Form.Group>
-                    </Col>
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="description">
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Description"
+                                />
+                            </Form.Group>
+                        </Col>
 
-                    <Col lg={6} className="mt-2">
-                        <Form.Group controlId="batchNumber">
-                            <Form.Label>Batch Number</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="batch_Number"
-                                value={formData.batch_Number}
-                                onChange={handleInputChange}
-                                placeholder="Enter Batch Number"
-                            />
-                        </Form.Group>
-                    </Col>
-                </Row>
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="stock_Quantity">
+                                <Form.Label>Quantity</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="stock_Quantity"
+                                    value={formData.stock_Quantity}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Quantity"
+                                />
+                            </Form.Group>
+                        </Col>
 
-                <Row className="mt-3">
-                    <Col lg={4} className="align-items-end d-flex justify-content-end mt-3">
-                        <ButtonGroup aria-label="Basic example" className="w-100">
-                            <Link to="/pages/SparepartInventory">
-                                <Button type="button" variant="primary">
-                                    Back
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="purchase_Price">
+                                <Form.Label>Purchase Price</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="purchase_Price"
+                                    value={formData.purchase_Price}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Purchase Price"
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="selling_Price">
+                                <Form.Label>Selling Price</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="selling_Price"
+                                    value={formData.selling_Price}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Selling Price"
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="currency">
+                                <Form.Label>Currency</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="currency"
+                                    value={formData.currency}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Currency"
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="supplier_Name">
+                                <Form.Label>Supplier Name</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="supplier_Name"
+                                    value={formData.supplier_Name}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Supplier Name"
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="supplier_Contact">
+                                <Form.Label>Supplier Contact</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="supplier_Contact"
+                                    value={formData.supplier_Contact}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Supplier Contact"
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="voltage_Wattage">
+                                <Form.Label>Voltage/Wattage</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="voltage_Wattage"
+                                    value={formData.voltage_Wattage}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Voltage/Wattage"
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="connector_Type">
+                                <Form.Label>Connector Type</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="connector_Type"
+                                    value={formData.connector_Type}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Connector Type"
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="cable_Length">
+                                <Form.Label>Cable Length</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="cable_Length"
+                                    value={formData.cable_Length}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Cable Length"
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="warranty_Period">
+                                <Form.Label>Warranty Period</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="warranty_Period"
+                                    value={formData.warranty_Period}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Warranty Period"
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="batch_Number">
+                                <Form.Label>Batch Number</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="batch_Number"
+                                    value={formData.batch_Number}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Batch Number"
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="serial_Number">
+                                <Form.Label>Serial Number</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="serial_Number"
+                                    value={formData.serial_Number}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Serial Number"
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2">
+                            <Form.Group controlId="manufacturing_Date">
+                                <Form.Label>Manufacturing Date</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    name="manufacturing_Date"
+                                    value={formData.manufacturing_Date}
+                                    onChange={handleInputChange}
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col lg={6} className="mt-2 mb-3">
+                            <Form.Group controlId="expiry_Date">
+                                <Form.Label>Expiry Date</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    name="expiry_Date"
+                                    value={formData.expiry_Date}
+                                    onChange={handleInputChange}
+                                />
+                            </Form.Group>
+                        </Col>
+
+                        <Col className="align-items-end d-flex justify-content-end mb-3">
+                            <div>
+                                <Link to="/pages/SparepartInventory">
+                                    <Button variant="primary " className="me-2">
+                                        Back
+                                    </Button>
+                                </Link>
+                                <Button type="submit" variant="primary">
+                                    {editMode ? 'Update Inventory' : 'Add Inventory'}
                                 </Button>
-                            </Link>
-                            &nbsp;
-                            <Button type="submit" variant="primary">
-                                Save
-                            </Button>
-                        </ButtonGroup>
-                    </Col>
-                </Row>
-            </Form>
+                            </div>
+                        </Col>
+                    </Row>
+                </Form>
+            </div>
         </div>
     );
 }

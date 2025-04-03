@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Table, Container, Row, Col, Alert, Form, ButtonGroup } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Button, Table, Container, Row, Col, Alert, Form, ButtonGroup, Collapse } from 'react-bootstrap';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import config from '@/config';
 import Select from 'react-select';
@@ -10,15 +9,32 @@ import PaginationComponent from '../../Component/PaginationComponent';
 import axiosInstance from '@/utils/axiosInstance';
 
 
-interface RoleMaster {
+interface InventoryItem {
     id: number;
-    managerName: string;
-    departmentID: number;
+    item_Name: string;
+    category: string;
+    brand: string;
+    model_Number: string;
+    description: string;
+    stock_Quantity: number;
+    reorder_Level: number;
+    stock_Location: string;
+    purchase_Price: number;
+    selling_Price: number;
+    currency: string;
+    supplier_Name: string;
+    supplier_ID: number;
+    supplier_Contact: string;
+    voltage_Wattage: string;
+    connector_Type: string;
+    cable_Length: string;
+    warranty_Period: string;
+    manufacturing_Date: string;
+    expiry_Date: string;
+    batch_Number: string;
+    serial_Number: string;
     status: number;
-    createdBy: string;
-    updatedBy: string;
 }
-
 
 interface Column {
     id: string;
@@ -29,11 +45,11 @@ interface Column {
 
 
 const QualityCheckMaster = () => {
-    const [employee, setEmployee] = useState<RoleMaster[]>([]);
+    const [employee, setEmployee] = useState<InventoryItem[]>([]);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-
+    const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -48,16 +64,16 @@ const QualityCheckMaster = () => {
 
 
     // both are required to make dragable column of table 
-        const [columns, setColumns] = useState<Column[]>([
-            { id: 'item_Name', label: 'Item Name', visible: true },
-            { id: 'category', label: 'Category', visible: true },
-            { id: 'brand', label: 'Brand', visible: true },
-            { id: 'model_Number', label: 'Model Number', visible: true },
-            { id: 'stock_Quantity', label: 'Stock Quantity', visible: true },
-            { id: 'reorder_Level', label: 'Reorder Level', visible: true },
-            { id: 'stock_Location', label: 'Stock Location', visible: true },
-            { id: 'selling_Price', label: 'Selling Price', visible: true },
-        ]);
+    const [columns, setColumns] = useState<Column[]>([
+        { id: 'item_Name', label: 'Item Name', visible: true },
+        { id: 'category', label: 'Category', visible: true },
+        { id: 'brand', label: 'Brand', visible: true },
+        { id: 'model_Number', label: 'Model Number', visible: true },
+        { id: 'stock_Quantity', label: 'Stock Quantity', visible: true },
+        { id: 'reorder_Level', label: 'Reorder Level', visible: true },
+        { id: 'stock_Location', label: 'Stock Location', visible: true },
+        { id: 'selling_Price', label: 'Selling Price', visible: true },
+    ]);
 
     const handleOnDragEnd = (result: any) => {
         if (!result.destination) return;
@@ -104,6 +120,30 @@ const QualityCheckMaster = () => {
         }
     };
 
+    const toggleExpandRow = (id: number) => {
+        setExpandedRow(expandedRow === id ? null : id);
+    };
+
+
+    const updateStatus = async (item: any, status: number) => {
+        const payload = {
+            ...item,
+            status,
+            updated_Date: new Date()
+        };
+        console.log(payload)
+        try {
+            const response = await axiosInstance.put(`${config.API_URL}/InventorySpare/UpdateInventorySpare/${item.id}`, payload);
+            if (response.data.isSuccess) {
+                toast.success("Record Updated Successfully")
+                fetchEmployee();
+            } else {
+                console.error('Failed to update status:', response.data.message);
+            }
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    };
 
     return (
 
@@ -123,7 +163,7 @@ const QualityCheckMaster = () => {
                 </div>
             </Row>
             <div className='bg-white p-2 pb-2'>
-            <Form onSubmit={async (e) => e.preventDefault()}>
+                <Form onSubmit={async (e) => e.preventDefault()}>
                     <Row>
                         <Col lg={4} className="mt-2">
                             <Form.Group controlId="searchEmployee">
@@ -252,7 +292,7 @@ const QualityCheckMaster = () => {
                                                             )}
                                                         </Draggable>
                                                     ))}
-                                                    <th>Action</th>
+                                                    <th className='text-center'>Action</th>
                                                 </tr>
                                             )}
                                         </Droppable>
@@ -260,24 +300,106 @@ const QualityCheckMaster = () => {
                                     <tbody>
                                         {employee.length > 0 ? (
                                             employee.slice(0, 10).map((item, index) => (
-                                                <tr key={item.id}>
-                                                    <td>{(currentPage - 1) * 10 + index + 1}</td>
-                                                    {columns.filter(col => col.visible).map((col) => (
-                                                        <td key={col.id}>
-                                                            {col.id === 'status' ? (item.status === 1 ? 'Active' : 'Inactive') : (
-                                                                <div>{item[col.id as keyof RoleMaster]}</div>
-                                                            )}
+                                                <>
 
+                                                    <tr key={item.id}>
+                                                        <td>{(currentPage - 1) * 10 + index + 1}</td>
+                                                        {columns.filter(col => col.visible).map((col) => (
+                                                            <td key={col.id}>
+                                                                {col.id === 'status' ? (item.status === 1 ? 'Active' : 'Inactive') : (
+                                                                    <div>{item[col.id as keyof InventoryItem]}</div>
+                                                                )}
+
+                                                            </td>
+                                                        ))}
+
+                                                        <td className='text-center'>
+                                                            <Button onClick={() => toggleExpandRow(item.id)} >
+                                                                {expandedRow === item.id ? <i className=" fs-18 ri-arrow-up-s-line"></i> : <i className=" fs-18 ri-arrow-down-s-line"></i>}
+                                                            </Button>
                                                         </td>
-                                                    ))}
-                                                    <td><Link to={`/pages/RoleMasterinsert/${item.id}`}>
-                                                        <Button variant='primary' className='icon-padding text-white'>
-                                                            {/* <i className='fs-18 ri-edit-line text-white' ></i> */}
-                                                            Defective
-                                                        </Button>
-                                                    </Link>
-                                                    </td>
-                                                </tr>
+                                                    </tr>
+                                                    {expandedRow && expandedRow === item.id ? (
+                                                        <tr>
+                                                            <td colSpan={12}>
+                                                                <Collapse in={expandedRow === item.id}>
+                                                                    <div className="p-4">
+                                                                        <Row className="">
+                                                                            <Col md={6} className="d-flex align-items-stretch">
+                                                                                <div className="card p-3 mb-4 shadow-sm flex-fill">
+                                                                                    <h4 className="card-title">Item Details</h4>
+                                                                                    <p><strong>Item Name:</strong> {item.item_Name}</p>
+                                                                                    <p><strong>Category:</strong> {item.category}</p>
+                                                                                    <p><strong>Brand:</strong> {item.brand}</p>
+                                                                                    <p><strong>Model Number:</strong> {item.model_Number}</p>
+                                                                                    <p><strong>Description:</strong> {item.description}</p>
+                                                                                    <p><strong>Stock Quantity:</strong> {item.stock_Quantity}</p>
+                                                                                    <p><strong>Stock Location:</strong> {item.stock_Location}</p>
+                                                                                </div>
+                                                                            </Col>
+
+                                                                            <Col md={6} className="d-flex align-items-stretch">
+                                                                                <div className="card p-3 mb-4 shadow-sm flex-fill">
+                                                                                    <h4 className="card-title">Pricing & Supplier</h4>
+                                                                                    <p><strong>Purchase Price:</strong> {item.purchase_Price}</p>
+                                                                                    <p><strong>Selling Price:</strong> {item.selling_Price}</p>
+                                                                                    <p><strong>Currency:</strong> {item.currency}</p>
+                                                                                    <p><strong>Supplier Name:</strong> {item.supplier_Name}</p>
+                                                                                    <p><strong>Supplier ID:</strong> {item.supplier_ID}</p>
+                                                                                    <p><strong>Supplier Contact:</strong> {item.supplier_Contact}</p>
+                                                                                </div>
+                                                                            </Col>
+                                                                        </Row>
+
+                                                                        <Row className="mb-4">
+                                                                            <Col md={6} className="d-flex align-items-stretch">
+                                                                                <div className="card p-3 mb-4 shadow-sm flex-fill">
+                                                                                    <h4 className="card-title">Technical Details</h4>
+                                                                                    <p><strong>Voltage/Wattage:</strong> {item.voltage_Wattage}</p>
+                                                                                    <p><strong>Connector Type:</strong> {item.connector_Type}</p>
+                                                                                    <p><strong>Cable Length:</strong> {item.cable_Length}</p>
+                                                                                    <p><strong>Warranty Period:</strong> {item.warranty_Period}</p>
+                                                                                </div>
+                                                                            </Col>
+
+                                                                            <Col md={6} className="d-flex align-items-stretch">
+                                                                                <div className="card p-3 mb-4 shadow-sm flex-fill">
+                                                                                    <h4 className="card-title">Manufacturing & Expiry</h4>
+                                                                                    <p><strong>Manufacturing Date:</strong> {new Date(item.manufacturing_Date).toLocaleString()}</p>
+                                                                                    <p><strong>Expiry Date:</strong> {new Date(item.expiry_Date).toLocaleString()}</p>
+                                                                                    <p><strong>Batch Number:</strong> {item.batch_Number}</p>
+                                                                                    <p><strong>Serial Number:</strong> {item.serial_Number}</p>
+                                                                                </div>
+                                                                            </Col>
+                                                                        </Row>
+
+                                                                        <Row className="d-flex justify-content-end">
+                                                                            <Col md={6} className="d-flex justify-content-end">
+                                                                                <ButtonGroup>
+                                                                                    <Button
+                                                                                        variant="outline-danger"
+                                                                                        onClick={() => updateStatus(item, 2)}
+                                                                                        className="me-2"
+                                                                                    >
+                                                                                        Defective
+                                                                                    </Button>
+                                                                                    <Button
+                                                                                        variant="outline-success"
+                                                                                        onClick={() => updateStatus(item, 1)}
+                                                                                    >
+                                                                                        Non-Defective
+                                                                                    </Button>
+                                                                                </ButtonGroup>
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </div>
+                                                                </Collapse>
+                                                            </td>
+                                                        </tr>
+                                                    ) : null}
+
+                                                </>
+
                                             ))
                                         ) : (
                                             <tr>

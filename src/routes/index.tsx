@@ -41,6 +41,7 @@ const RoleMasterinsert = React.lazy(() => import('../pages/other/UIPages/RoleMas
 
 const ProductMaster = React.lazy(() => import('../pages/other/UIPages/Inventory/InventoryMaster.tsx'))
 const ProductMasterinsert = React.lazy(() => import('../pages/other/UIPages/Inventory/InventoryMasterinsert.tsx'))
+const SpareBulkInventory = React.lazy(() => import('../pages/other/UIPages/SparepartInventory/SpareBulkInventory.tsx'))
 
 const CommingSoon = React.lazy(() => import('../pages/other/UIPages/CommingSoon.tsx'))
 
@@ -139,6 +140,12 @@ const customPagesRoutes = {
 			route: PrivateRoute,
 		},
 		{
+			path: '/pages/SpareBulkInventory',
+			name: 'SpareBulkInventory',
+			element: <SpareBulkInventory />,
+			route: PrivateRoute,
+		},
+		{
 			path: '/pages/SparepartInventoryInsert',
 			name: 'SparepartInventoryInsert',
 			element: <SparepartInventoryInsert />,
@@ -186,7 +193,7 @@ const customPagesRoutes = {
 			element: <CustomerMasterInsert />,
 			route: PrivateRoute,
 		},
-			{
+		{
 			path: '/pages/DefectiveSparePart',
 			name: 'DefectiveSparePart',
 			element: <DefectiveSparePart />,

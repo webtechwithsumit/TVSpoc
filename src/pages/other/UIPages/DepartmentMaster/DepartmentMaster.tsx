@@ -46,8 +46,8 @@ const DesignationMaster = () => {
     const [departmentList, setDepartmentList] = useState<DepartmentList[]>([]);
     const [searchDept, setSearchDept] = useState('');
     const [searchStatus, setSearchStatus] = useState('');
-        console.log(setDepartmentList)
-        console.log(departmentList)
+    console.log(setDepartmentList)
+    console.log(departmentList)
     // Function to handle opening the modal
 
     const location = useLocation();
@@ -150,7 +150,7 @@ const DesignationMaster = () => {
         <div className='p-3 mt-3 bg-white'>
             <Row className=' mb-2 px-2'>
                 <div className="d-flex justify-content-between profilebar p-1">
-                    <h4 className='text-primary d-flex align-items-center m-0'><i className="ri-file-list-line me-2 text-primary "></i>Manage Department</h4>
+                    <h4 className='text-primary d-flex align-items-center m-0'><i className="ri-file-list-line me-2 text-primary "></i> Department Master</h4>
                     <div className="d-flex justify-content-end bg-light w-50 profilebar">
                         <Button variant="primary" className="me-2">
                             Download CSV
@@ -197,7 +197,7 @@ const DesignationMaster = () => {
                                         />
                                     </Form.Group>
                                 </Col>
-                               
+
                                 <Col lg={4} className="">
                                     <Form.Group controlId="searchStatus">
                                         <Form.Label>Status</Form.Label>
@@ -304,11 +304,11 @@ const DesignationMaster = () => {
 
                                                         <td className="text-center">
                                                             <Link to={`/pages/DepartmentMasterinsert/${item.id}`}>
-                                                                <Button variant="primary" className="p-0 text-white me-3">
+                                                                <Button variant="primary" className="p-0 text-white ">
                                                                     <i className="btn ri-edit-line text-white"></i>
                                                                 </Button>
                                                             </Link>
-                                                           </td>
+                                                        </td>
                                                     </tr>
                                                 ))
                                             ) : (
