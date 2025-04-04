@@ -34,6 +34,7 @@ const CustomerMasterInsert = React.lazy(() => import('../pages/other/UIPages/Cus
 const ExpiredSparePart = React.lazy(() => import('../pages/other/UIPages/ExpiredSparePart/ExpiredSparePart.tsx'))
 
 const TicketMaster = React.lazy(() => import('../pages/other/UIPages/TicketManagement/TicketMaster.tsx'))
+const TicketUserMaster = React.lazy(() => import('../pages/other/UIPages/TicketManagement/TickerUsermaster.tsx'))
 const TicketMasterinsert = React.lazy(() => import('../pages/other/UIPages/TicketManagement/TicketMasterinsert.tsx'))
 
 const RoleMaster = React.lazy(() => import('../pages/other/UIPages/RoleMaster/Rolemaster.tsx'))
@@ -94,7 +95,7 @@ const customPagesRoutes = {
 		{
 			path: '/pages/profile',
 			name: 'Profile',
-			element: <PrivateRoute element={<ProfilePages />} roles={['DME', 'User']} />,
+			element: <PrivateRoute element={<ProfilePages />} />,
 			route: PrivateRoute,
 		},
 		{
@@ -203,6 +204,12 @@ const customPagesRoutes = {
 			path: '/pages/TicketMaster',
 			name: 'TicketMaster',
 			element: <TicketMaster />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/TicketUserMaster',
+			name: 'TicketUserMaster',
+			element: <TicketUserMaster />,
 			route: PrivateRoute,
 		},
 		{

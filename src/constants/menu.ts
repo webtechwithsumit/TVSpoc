@@ -27,7 +27,9 @@ const MENU_ITEMS: MenuItemTypes[] = [
 			variant: 'success',
 			text: '',
 		},
+		roles: ['Admin',],
 	},
+
 
 	{
 		key: 'Masters',
@@ -35,6 +37,7 @@ const MENU_ITEMS: MenuItemTypes[] = [
 		isTitle: false,
 		icon: 'ri-settings-3-line',
 		url: '/pages/ProductMaster',
+		roles: ['Admin',],
 		children: [
 			{
 				key: 'Role Name',
@@ -65,6 +68,7 @@ const MENU_ITEMS: MenuItemTypes[] = [
 		isTitle: false,
 		icon: 'ri-settings-3-line',
 		url: '/pages/ProductMaster',
+		roles: ['Admin',],
 		children: [
 			{
 				key: 'Role Name',
@@ -80,6 +84,7 @@ const MENU_ITEMS: MenuItemTypes[] = [
 		key: 'InventoryMasters',
 		label: 'Inventory Master',
 		icon: 'ri-loop-left-line',
+		roles: ['Admin',],
 		children: [
 			{
 				key: 'Spare Part Master',
@@ -119,9 +124,10 @@ const MENU_ITEMS: MenuItemTypes[] = [
 		],
 	},
 	{
-		key: 'Ticket Management',
+		key: 'TicketManagement',
 		label: 'Ticket Management',
 		icon: 'ri-loop-left-line',
+		roles: ['Admin',],
 		children: [
 			{
 				key: 'Ticket Master',
@@ -165,6 +171,7 @@ const MENU_ITEMS: MenuItemTypes[] = [
 		key: 'Profile',
 		label: 'Settings',
 		icon: 'ri-settings-3-line',
+		roles: ['Admin',],
 		children: [
 			{
 				key: 'Porfile',
@@ -183,6 +190,27 @@ const MENU_ITEMS: MenuItemTypes[] = [
 
 
 		],
+	},
+	{
+		key: 'TicketMasterUser',
+		label: 'Generate Ticket',
+		url: '/pages/TicketMasterinsert',
+		icon: 'ri-dashboard-3-line',
+		roles: ['Customer',],
+	},
+	{
+		key: 'Track Ticket',
+		label: 'Track Ticket',
+		url: '/pages/TicketUserMaster',
+		icon: 'ri-dashboard-3-line',
+		roles: ['Customer',],
+	},
+	{
+		key: 'TrackRequest',
+		label: 'Update Profile',
+		url: '/pages/profile',
+		icon: 'ri-dashboard-3-line',
+		roles: ['Customer',],
 	},
 ]
 

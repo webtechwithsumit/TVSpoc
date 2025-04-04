@@ -1,9 +1,11 @@
-import  { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Button, Row, Col, Container, Alert, Table } from 'react-bootstrap'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import PaginationComponent from '../../Component/PaginationComponent'
 import { toast } from 'react-toastify';  // Add this import if toast is being used
+import axiosInstance from '@/utils/axiosInstance'
+import config from '@/config'
 
 interface CourierDetails {
   id: string;
@@ -43,16 +45,22 @@ function TicketMaster() {
 
   // Column configuration for drag-and-drop table columns
   const [columns, setColumns] = useState<Column[]>([
-    { id: 'courierName', label: 'Courier Name', visible: true },
-    { id: 'trackingID', label: 'Tracking ID', visible: true },
-    { id: 'proofOfDelivery', label: 'Proof of Delivery', visible: true },
-    { id: 'receivingPartyName', label: 'Receiving Party Name', visible: true },
-    { id: 'receivingPartyContact', label: 'Receiving Party Contact', visible: true },
-    { id: 'receivingPartyAddress', label: 'Receiving Party Address', visible: true },
-    { id: 'deliveryStatus', label: 'Delivery Status', visible: true },
-    { id: 'estimatedDeliveryDate', label: 'Estimated Delivery Date', visible: true },
-    { id: 'remarks', label: 'Remarks', visible: true },
-  ])
+    { id: 'callNo', label: 'Mobile Number', visible: true },
+    { id: 'initiator', label: 'Initiator', visible: true },
+    { id: 'productName', label: 'Product Name', visible: true },
+    { id: 'brandName', label: 'Brand Name', visible: true },
+    { id: 'modelNumber', label: 'Model Number', visible: true },
+    { id: 'ticketType', label: 'Ticket Type', visible: true },
+    { id: 'ticketStatus', label: 'Ticket Status', visible: true },
+    { id: 'registrationDate', label: 'Registration Date', visible: true },
+    { id: 'responseTime', label: 'Response Time', visible: true },
+    { id: 'customerAcknowledgment', label: 'Customer Acknowledgment', visible: true },
+    { id: 'engineerFollowUp', label: 'Engineer Follow-Up', visible: true },
+    { id: 'issueDescription', label: 'Issue Description', visible: true },
+    { id: 'createdBy', label: 'Created By', visible: true },
+    { id: 'lastUpdated', label: 'Last Updated', visible: true },
+  ]);
+
 
   const handleOnDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -62,26 +70,30 @@ function TicketMaster() {
     setColumns(reorderedColumns);
   };
 
-  // Example API call to fetch courier details (you should replace it with your real API call)
+
   useEffect(() => {
-    setLoading(true);
-    // Example of data fetching
-    fetchCourierDetails();
+    fetchEmployee();
   }, [currentPage]);
 
-  const fetchCourierDetails = async () => {
+  const fetchEmployee = async () => {
+    setLoading(true);
     try {
-      // Replace with your API call logic
-      const response = await fetch(`/api/courierDetails?page=${currentPage}`);
-      const data = await response.json();
-      setCourierDetails(data.items);
-      setTotalPages(data.totalPages); // Assume the response contains totalPages
-      setLoading(false);
+      const response = await axiosInstance.get(`${config.API_URL}/TicketMaster/GetTicketMaster/0`);
+      if (response.data.isSuccess) {
+        setCourierDetails(response.data.ticketMasters);
+        setTotalPages(Math.ceil(response.data.totalCount / 10));
+      } else {
+        console.error(response.data.message);
+      }
     } catch (error) {
-      console.error("Error fetching data", error);
+      console.error('Error fetching doers:', error);
+    }
+    finally {
       setLoading(false);
     }
-  }
+  };
+
+
 
   return (
     <div className="p-3 mt-3 bg-white">
@@ -157,7 +169,7 @@ function TicketMaster() {
                         </td>
                       ))}
                       <td>
-                        <Link to={`/pages/CourierMasterInsert/${item.id}`}>
+                        <Link to={`/pages/TicketMasterinsert/${item.id}`}>
                           <Button variant="primary" className="icon-padding text-white">
                             <i className="fs-18 ri-edit-line text-white"></i>
                           </Button>
