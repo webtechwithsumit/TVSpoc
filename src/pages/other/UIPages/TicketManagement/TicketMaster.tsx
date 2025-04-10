@@ -1,37 +1,50 @@
 import { useState, useEffect } from 'react'
-import { Button, Row, Col, Container, Alert, Table } from 'react-bootstrap'
+import { Button, Row, Col, Container, Alert, Table, Collapse } from 'react-bootstrap'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import PaginationComponent from '../../Component/PaginationComponent'
-import { toast } from 'react-toastify';  // Add this import if toast is being used
+import { toast } from 'react-toastify';
 import axiosInstance from '@/utils/axiosInstance'
 import config from '@/config'
 
-interface CourierDetails {
-  id: string;
-  courierName: string;
-  trackingID: string;
-  proofOfDelivery: string;
-  receivingPartyName: string;
-  receivingPartyContact: string;
-  receivingPartyAddress: string;
-  deliveryStatus: string;
-  estimatedDeliveryDate: string;
-  remarks: string;
+interface FileUpload {
+  id: number;
+  modelNumber: string;
+  url: string;
+  ticketStatus: number;
+  createdBy: string;
+  createdDate: string;
+  updatedBy: string | null;
+  updatedDate: string | null;
 }
 
-interface Column {
-  id: string;
-  label: string;
-  visible: boolean;
+interface TicketDetails {
+  ticketID: number;
+  callNo: string;
+  initiator: string;
+  productName: string;
+  brandName: string | null;
+  modelNumber: string;
+  ticketType: string;
+  ticketStatus: string;
+  registrationDate: string;
+  responseTime: string;
+  customerAcknowledgment: string;
+  engineerFollowUp: string;
+  issueDescription: string;
+  createdBy: string;
+  lastUpdated: string;
+  assignDate: string | null;
+  assignEngineerName: string | null;
+  fileUploads: FileUpload[];
 }
 
 function TicketMaster() {
-  const [courierDetails, setCourierDetails] = useState<CourierDetails[]>([])
+  const [ticketDetails, setTicketDetails] = useState<TicketDetails[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
-
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -43,24 +56,16 @@ function TicketMaster() {
     }
   }, [location.state, navigate])
 
-  // Column configuration for drag-and-drop table columns
-  const [columns, setColumns] = useState<Column[]>([
-    { id: 'callNo', label: 'Mobile Number', visible: true },
+  const [columns, setColumns] = useState([
     { id: 'initiator', label: 'Initiator', visible: true },
+    { id: 'callNo', label: 'Mobile Number', visible: true },
     { id: 'productName', label: 'Product Name', visible: true },
     { id: 'brandName', label: 'Brand Name', visible: true },
     { id: 'modelNumber', label: 'Model Number', visible: true },
     { id: 'ticketType', label: 'Ticket Type', visible: true },
     { id: 'ticketStatus', label: 'Ticket Status', visible: true },
-    { id: 'registrationDate', label: 'Registration Date', visible: true },
-    { id: 'responseTime', label: 'Response Time', visible: true },
-    { id: 'customerAcknowledgment', label: 'Customer Acknowledgment', visible: true },
-    { id: 'engineerFollowUp', label: 'Engineer Follow-Up', visible: true },
     { id: 'issueDescription', label: 'Issue Description', visible: true },
-    { id: 'createdBy', label: 'Created By', visible: true },
-    { id: 'lastUpdated', label: 'Last Updated', visible: true },
   ]);
-
 
   const handleOnDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -70,37 +75,44 @@ function TicketMaster() {
     setColumns(reorderedColumns);
   };
 
-
   useEffect(() => {
-    fetchEmployee();
+    fetchTickets();
   }, [currentPage]);
 
-  const fetchEmployee = async () => {
+  const fetchTickets = async () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(`${config.API_URL}/TicketMaster/GetTicketMaster/0`);
       if (response.data.isSuccess) {
-        setCourierDetails(response.data.ticketMasters);
+        setTicketDetails(response.data.ticketMasters);
         setTotalPages(Math.ceil(response.data.totalCount / 10));
       } else {
         console.error(response.data.message);
       }
     } catch (error) {
-      console.error('Error fetching doers:', error);
+      console.error('Error fetching tickets:', error);
     }
     finally {
       setLoading(false);
     }
   };
 
+  const toggleExpandRow = (ticketID: number) => {
+    setExpandedRow(expandedRow === ticketID ? null : ticketID);
+  };
 
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleString();
+  };
 
   return (
     <div className="p-3 mt-3 bg-white">
       <Row className="mb-2 px-2">
         <div className="d-flex justify-content-between profilebar p-1">
           <h4 className="text-primary d-flex align-items-center m-0">
-            <i className="ri-file-list-line me-2 text-primary"></i> Ticket Master
+            <i className="ri-file-list-line me-2 text-primary"></i> Raised Ticket
           </h4>
           <div className="d-flex justify-content-end bg-light w-50 profilebar">
             <Button variant="primary" className="me-2">
@@ -108,7 +120,7 @@ function TicketMaster() {
             </Button>
             <Link to="/pages/TicketMasterinsert">
               <Button variant="primary">
-                Add Ticket Master
+                Raise Ticket
               </Button>
             </Link>
           </div>
@@ -122,7 +134,7 @@ function TicketMaster() {
         </div>
       ) : (
         <div className="overflow-auto text-nowrap">
-          {courierDetails.length === 0 ? (
+          {ticketDetails.length === 0 ? (
             <Container className="mt-5">
               <Row className="justify-content-center">
                 <Col xs={12} md={8} lg={6}>
@@ -156,26 +168,96 @@ function TicketMaster() {
                   </Droppable>
                 </thead>
                 <tbody>
-                  {courierDetails.map((item, index) => (
-                    <tr key={item.id}>
-                      <td>{(currentPage - 1) * 10 + index + 1}</td>
-                      {columns.filter((col) => col.visible).map((col) => (
-                        <td key={col.id}>
-                          {col.id === 'deliveryStatus' ? (
-                            <div>{item.deliveryStatus}</div>
-                          ) : (
-                            <div>{item[col.id as keyof CourierDetails]}</div>
-                          )}
-                        </td>
-                      ))}
-                      <td>
-                        <Link to={`/pages/TicketMasterinsert/${item.id}`}>
-                          <Button variant="primary" className="icon-padding text-white">
-                            <i className="fs-18 ri-edit-line text-white"></i>
+                  {ticketDetails.map((item, index) => (
+                    <>
+                      <tr key={item.ticketID}>
+                        <td>{(currentPage - 1) * 10 + index + 1}</td>
+                        {columns.filter(col => col.visible).map((col) => (
+                          <td key={col.id}>
+                            <div>
+                              {item[col.id as keyof TicketDetails] !== null && item[col.id as keyof TicketDetails] !== undefined
+                                ? (Array.isArray(item[col.id as keyof TicketDetails])
+                                  ? (item[col.id as keyof TicketDetails] as any[]).map((file, i) => (
+                                    <div key={i}>
+                                      <a href={file.url} target="_blank" rel="noopener noreferrer">
+                                        {file.url.split('\\').pop()}
+                                      </a>
+                                    </div>
+                                  ))
+                                  : (col.id === 'registrationDate' || col.id === 'responseTime' || col.id === 'lastUpdated'
+                                    ? formatDate(item[col.id as keyof TicketDetails] as string)
+                                    : item[col.id as keyof TicketDetails] as React.ReactNode
+                                  ))
+
+                                : null
+                              }
+                            </div>
+                          </td>
+                        ))}
+                        <td className='text-center'>
+                          <Button onClick={() => toggleExpandRow(item.ticketID)} >
+                            {expandedRow === item.ticketID ? <i className=" fs-18 ri-arrow-up-s-line"></i> : <i className=" fs-18 ri-arrow-down-s-line"></i>}
                           </Button>
-                        </Link>
-                      </td>
-                    </tr>
+                        </td>
+                      </tr>
+                      {expandedRow === item.ticketID && (
+                        <tr>
+                          <td colSpan={columns.filter(col => col.visible).length + 2}>
+                            <Collapse in={expandedRow === item.ticketID}>
+                              <div className="p-4">
+                                <Row className="">
+                                  <Col md={6} className="d-flex align-items-stretch">
+                                    <div className="card p-3 mb-4 shadow-sm flex-fill">
+                                      <h4 className="card-title">Ticket Details</h4>
+                                      <p><strong>Customer Acknowledgment:</strong> {item.customerAcknowledgment || '-'}</p>
+                                      <p><strong>Engineer Follow Up:</strong> {item.engineerFollowUp || '-'}</p>
+                                      <p><strong>Created By:</strong> {item.createdBy || '-'}</p>
+                                      <p><strong>Last Updated:</strong> {formatDate(item.lastUpdated)}</p>
+                                    </div>
+                                  </Col>
+
+                                  <Col md={6} className="d-flex align-items-stretch">
+                                    <div className="card p-3 mb-4 shadow-sm flex-fill">
+                                      <h4 className="card-title">Assignment Details</h4>
+                                      <p><strong>Assigned Engineer:</strong> {item.assignEngineerName || 'Not assigned'}</p>
+                                      <p><strong>Assign Date:</strong> {item.assignDate ? formatDate(item.assignDate) : '-'}</p>
+                                    </div>
+                                  </Col>
+                                </Row>
+
+                                <Row className="mb-4">
+                                  <Col md={12} className="d-flex align-items-stretch">
+                                    <div className="card p-3 mb-4 shadow-sm flex-fill">
+                                      <h4 className="card-title">Attachments</h4>
+                                      {item.fileUploads && item.fileUploads.length > 0 ? (
+                                        <div>
+                                          {item.fileUploads.map(file => (
+                                            <div key={file.id}>
+                                              <a href={file.url} target="_blank" rel="noopener noreferrer">
+                                                {file.url.split('\\').pop()}
+                                              </a>
+                                              <span> (Uploaded by {file.createdBy} on {formatDate(file.createdDate)})</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      ) : (
+                                        <p>No attachments available</p>
+                                      )}
+                                    </div>
+                                  </Col>
+                                </Row>
+
+                                <Link to={`/pages/AssignTicketinsert/${item.ticketID}`}>
+                                  <Button>
+                                    Take Action
+                                  </Button>
+                                </Link>
+                              </div>
+                            </Collapse>
+                          </td>
+                        </tr>
+                      )}
+                    </>
                   ))}
                 </tbody>
               </Table>

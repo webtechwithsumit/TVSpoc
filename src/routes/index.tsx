@@ -44,6 +44,9 @@ const ProductMaster = React.lazy(() => import('../pages/other/UIPages/Inventory/
 const ProductMasterinsert = React.lazy(() => import('../pages/other/UIPages/Inventory/InventoryMasterinsert.tsx'))
 const SpareBulkInventory = React.lazy(() => import('../pages/other/UIPages/SparepartInventory/SpareBulkInventory.tsx'))
 
+const AssignTicketinsert = React.lazy(() => import('../pages/other/UIPages/AssignTicket/AssignTicketinsert.tsx'))
+const AssignedTicket = React.lazy(() => import('../pages/other/UIPages/AssignTicket/AssignedTicket.tsx'))
+
 const CommingSoon = React.lazy(() => import('../pages/other/UIPages/CommingSoon.tsx'))
 
 const Error404 = React.lazy(() => import('../pages/error/Error404'))
@@ -96,6 +99,18 @@ const customPagesRoutes = {
 			path: '/pages/profile',
 			name: 'Profile',
 			element: <PrivateRoute element={<ProfilePages />} />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/AssignedTicket',
+			name: 'AssignedTicket',
+			element: <AssignedTicket />,
+			route: PrivateRoute,
+		},
+		{
+			path: '/pages/AssignTicketinsert/:ticketID',
+			name: 'AssignTicketinsert',
+			element: <AssignTicketinsert />,
 			route: PrivateRoute,
 		},
 		{

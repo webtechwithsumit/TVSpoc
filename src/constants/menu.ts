@@ -71,7 +71,7 @@ const MENU_ITEMS: MenuItemTypes[] = [
 		roles: ['Admin',],
 		children: [
 			{
-				key: 'Role Name',
+				key: 'Customer Master',
 				label: ' Customer Master',
 				url: '/pages/CustomerMaster',
 				icon: 'ri-calendar-todo-line',
@@ -137,9 +137,9 @@ const MENU_ITEMS: MenuItemTypes[] = [
 				parentKey: 'TicketManagement',
 			},
 			{
-				key: 'Assign Engineer Master',
-				label: 'Assign Engineer Master',
-				url: '/pages/AssignEngineerMaster',
+				key: 'Assignd Engineer Master',
+				label: 'Assignd Engineer Master',
+				url: '/pages/AssignedTicket',
 				icon: 'ri-slideshow-line',
 				parentKey: 'TicketManagement',
 			},

@@ -7,6 +7,26 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FileUploader } from '@/components/FileUploader';
 
+// Define the type for formData
+interface FormData {
+  ticketID: number;
+  callNo: string;
+  initiator: string;
+  assignedTo: number;
+  ticketStatus: string;
+  registrationDate: string | Date;
+  responseTime: string | Date;
+  customerAcknowledgment: string;
+  engineerFollowUp: string;
+  issueDescription: string;
+  createdBy: string;
+  ticketType: string;
+  lastUpdated: string | Date;
+  productName: string;
+  modelNo: string;
+  brandName: string;
+  files: File[];  // Explicitly include files as an array of File objects
+}
 function TicketMasterinsert() {
   const { user } = useAuthContext()
   const { id } = useParams<{ id: any }>();
@@ -14,8 +34,7 @@ function TicketMasterinsert() {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
 
-
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     ticketID: 0,
     callNo: '',
     initiator: `${user?.userName} - ${user?.userID}` || '',
@@ -31,11 +50,9 @@ function TicketMasterinsert() {
     lastUpdated: '',
     productName: '',
     modelNo: '',
-    brand: '',
+    brandName: '',
+    files: []  // Initialize files as an empty array
   });
-
-
-
 
   useEffect(() => {
     if (id) {
@@ -69,6 +86,14 @@ function TicketMasterinsert() {
     }));
   };
 
+  const handleFileChange = (files: File[]) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      files: files,
+    }));
+  };
+
+
   const validateFields = (): boolean => {
     const errors: { [key: string]: string } = {};
     // if (!employee.userName) errors.userName = 'User Name is required';
@@ -89,30 +114,39 @@ function TicketMasterinsert() {
 
     const payload = {
       ...formData,
-      // createdBy: editMode ? formData.createdBy : empName,
-      // updatedBy: editMode ? empName : '',
       ticketStatus: editMode ? formData.ticketStatus : 'Active',
       registrationDate: editMode ? formData.registrationDate : new Date(),
       responseTime: editMode ? formData.responseTime : new Date(),
       lastUpdated: editMode ? formData.lastUpdated : new Date(),
     };
 
-
-    console.log(payload)
     try {
-
       let apiUrl = `${config.API_URL}/TicketMaster/CreateTicketMaster`;
-
       if (editMode && id) {
         apiUrl = `${config.API_URL}/TicketMaster/UpdateTicketMaster/${id}`;
       }
 
       const method = editMode && id ? 'PUT' : 'POST';
 
+      const formDataToSend = new FormData();
+      Object.keys(payload).forEach((key) => {
+        // Type assertion to tell TypeScript that the key is valid for formData
+        const typedKey = key as keyof typeof formData;
+
+        if (typedKey === 'files') {
+          // Append files separately since they are of type File[]
+          payload.files.forEach((file: File) => {
+            formDataToSend.append('files', file);
+          });
+        } else {
+          formDataToSend.append(typedKey, payload[typedKey]);
+        }
+      });
+
       const response = await axiosInstance({
         method,
         url: apiUrl,
-        data: payload
+        data: formDataToSend,
       });
 
       if (response.status === 200) {
@@ -120,17 +154,19 @@ function TicketMasterinsert() {
           state: {
             successMessage: editMode
               ? `Record updated successfully!`
-              : `Record added successfully!`
-          }
+              : `Record added successfully!`,
+          },
         });
       } else {
         toast.error(response.data.message || 'Failed to process request');
       }
     } catch (error: any) {
       toast.error(error.message || 'Error Adding/Updating');
-      console.error('Error submitting employee:', error);
+      console.error('Error submitting ticket:', error);
     }
   };
+
+
 
 
   return (
@@ -205,17 +241,17 @@ function TicketMasterinsert() {
             </Col>
 
             <Col lg={6} className="mt-2">
-              <Form.Group controlId="brand">
+              <Form.Group controlId="brandName">
                 <Form.Label>Brand Name</Form.Label>
                 <Form.Control
                   type="text"
-                  name="brand"
-                  value={formData.brand}
+                  name="brandName"
+                  value={formData.brandName}
                   onChange={handleInputChange}
                   placeholder="Enter Brand Name"
-                  className={validationErrors.brand ? "input-border" : ""}
+                  className={validationErrors.brandName ? "input-border" : ""}
                 />
-                {validationErrors.brand && <small className="text-danger">{validationErrors.brand}</small>}
+                {validationErrors.brandName && <small className="text-danger">{validationErrors.brandName}</small>}
               </Form.Group>
             </Col>
 
@@ -280,17 +316,7 @@ function TicketMasterinsert() {
                       </Form.Control>
                     </Form.Group>
                   </Col>
-                  <Col lg={6} className="mt-2">
-                    <Form.Group controlId="responseTime">
-                      <Form.Label>Response Time</Form.Label>
-                      <Form.Control
-                        type="datetime-local"
-                        name="responseTime"
-                        value={formData.responseTime}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Group>
-                  </Col>
+
 
 
 
@@ -341,26 +367,16 @@ function TicketMasterinsert() {
               </Form.Group>
             </Col>
 
-            <Col lg={6} className='mt-2'>
+            <Col lg={6} className="mt-2">
               <Form.Group controlId="processFlowchart" className="mb-3">
                 <Form.Label>Upload Images</Form.Label>
                 <FileUploader
                   icon="ri-upload-cloud-2-line"
                   text="Drop files here or click to upload."
-                  // endPoint={`${config.API_URL}/FileUpload/UploadFiles`}
-                  // additionalData={{
-                  //   moduleName: process.moduleName,
-                  //   processName: process.processDisplayName,
-                  //   CreatedBy: empName,
-                  //   UpdatedBy: empName,
-                  // }}
-                  onFileUpload={(files) => {
-                    console.log('Files uploaded:', files);
-                  }}
+                  onFileUpload={handleFileChange} // Update the form data when files are uploaded
                 />
               </Form.Group>
             </Col>
-
 
 
           </Row>
