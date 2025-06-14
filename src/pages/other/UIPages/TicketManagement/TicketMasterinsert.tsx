@@ -130,19 +130,20 @@ function TicketMasterinsert() {
 
       const formDataToSend = new FormData();
       Object.keys(payload).forEach((key) => {
-        // Type assertion to tell TypeScript that the key is valid for formData
         const typedKey = key as keyof typeof formData;
 
         if (typedKey === 'files') {
-          // Append files separately since they are of type File[]
           payload.files.forEach((file: File) => {
             formDataToSend.append('files', file);
           });
         } else {
-          formDataToSend.append(typedKey, payload[typedKey]);
+          // Convert all values to string before appending
+          const value = payload[typedKey];
+          if (value !== undefined && value !== null) {
+            formDataToSend.append(typedKey, value.toString());
+          }
         }
       });
-
       const response = await axiosInstance({
         method,
         url: apiUrl,
